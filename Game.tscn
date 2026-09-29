@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://d4i53x4wnq3nc"]
 
 [ext_resource type="Script" uid="uid://dtsrtmc4vhn8v" path="res://VR_Game.gd" id="1_wbfu4"]
+[ext_resource type="Script" path="res://DesktopPlayer.gd" id="2_desktop"]
 
 [node name="Node3D" type="Node3D" unique_id=1010042180]
 script = ExtResource("1_wbfu4")
@@ -14,6 +15,24 @@ tracker = &"left_hand"
 
 [node name="RightHand" type="XRController3D" parent="XROrigin3D" unique_id=85255825]
 tracker = &"right_hand"
+
+[node name="DesktopPlayer" type="Node3D" parent="."]
+position = Vector3(0, 1.6, 2)
+script = ExtResource("2_desktop")
+
+[node name="Camera3D" type="Camera3D" parent="DesktopPlayer"]
+rotation = Vector3(-0.2, 0, 0)
+
+[node name="DesktopControls" type="CanvasLayer" parent="."]
+
+[node name="Help" type="Label" parent="DesktopControls"]
+offset_left = 16.0
+offset_top = 16.0
+mouse_filter = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+text = "Desktop testing\nWASD: move | Q/E: down/up | Shift: faster\nMouse: look | Esc: release cursor | Left click: capture"
 
 [node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=1062619124]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4624939, -0.4128418, 0.08157396)

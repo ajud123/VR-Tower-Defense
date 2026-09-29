@@ -34,6 +34,23 @@ You sit at a park bench with a tabletop battlefield in front of you. Reach over 
 - VR headset with OpenXR support
 - Tracked controllers (for grabbing/placing towers)
 
+## Desktop testing
+
+Run the project without an initialized VR headset to use the desktop test camera.
+To force desktop mode even with VR connected, add `--desktop` to Godot's
+**Project > Project Settings > Editor > Run > Main Run Args** (enable Advanced
+Settings if needed), or launch from the command line with
+`godot --path . -- --desktop`.
+
+- **WASD**: move horizontally
+- **Q / E**: move down / up
+- **Shift**: move faster
+- **Mouse**: look around
+- **Escape**: release the cursor and pause movement
+- **Left click**: capture the cursor again
+
+This is a free-moving camera for development; it can pass through objects.
+
 ## Further details
 
 Found here: [idea.md](idea.md)
