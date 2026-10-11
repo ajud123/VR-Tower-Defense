@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Card" format=3]
+
+[ext_resource type="Script" path="res://gameplay/cards/card.gd" id="1_card"]
+
+[resource]
+script = ExtResource("1_card")
+title = "Rapid Fire"
+description = "All towers fire 15% faster."
+color = Color(0.85, 0.7, 0.2, 1)
+multipliers = Dictionary[String, float]({
+"tower.fire_rate": 1.15
+})
+bonuses = Dictionary[String, float]({})

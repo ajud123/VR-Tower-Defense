@@ -1,0 +1,41 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://gameplay/towers/tower.gd" id="1_tower"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_stone"]
+albedo_color = Color(0.5, 0.5, 0.52, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_cannon_base"]
+material = SubResource("StandardMaterial3D_stone")
+size = Vector3(0.06, 0.05, 0.06)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_iron"]
+albedo_color = Color(0.15, 0.15, 0.17, 1)
+metallic = 0.6
+roughness = 0.4
+
+[sub_resource type="SphereMesh" id="SphereMesh_cannon"]
+material = SubResource("StandardMaterial3D_iron")
+radius = 0.025
+height = 0.05
+
+[node name="CannonTower" type="Node3D"]
+script = ExtResource("1_tower")
+display_name = "Cannon"
+kind = "cannon"
+cost = 100
+attack_range = 0.2
+damage = 4.0
+fire_interval = 1.6
+splash_radius = 0.07
+projectile_speed = 0.6
+projectile_color = Color(0.25, 0.25, 0.28, 1)
+muzzle_height = 0.07
+
+[node name="Body" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.025, 0)
+mesh = SubResource("BoxMesh_cannon_base")
+
+[node name="Ball" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.07, 0)
+mesh = SubResource("SphereMesh_cannon")

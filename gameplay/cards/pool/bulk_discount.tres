@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Card" format=3]
+
+[ext_resource type="Script" path="res://gameplay/cards/card.gd" id="1_card"]
+
+[resource]
+script = ExtResource("1_card")
+title = "Bulk Discount"
+description = "Towers cost 20% less."
+color = Color(0.35, 0.65, 0.3, 1)
+multipliers = Dictionary[String, float]({
+"tower.cost": 0.8
+})
+bonuses = Dictionary[String, float]({})

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Card" format=3]
+
+[ext_resource type="Script" path="res://gameplay/cards/card.gd" id="1_card"]
+
+[resource]
+script = ExtResource("1_card")
+title = "Bounty Hunter"
+description = "Enemies drop 50% more gold."
+color = Color(0.95, 0.8, 0.25, 1)
+multipliers = Dictionary[String, float]({
+"enemy.reward": 1.5
+})
+bonuses = Dictionary[String, float]({})

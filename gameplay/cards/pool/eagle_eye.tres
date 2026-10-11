@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Card" format=3]
+
+[ext_resource type="Script" path="res://gameplay/cards/card.gd" id="1_card"]
+
+[resource]
+script = ExtResource("1_card")
+title = "Eagle Eye"
+description = "All towers have 20% more range."
+color = Color(0.2, 0.6, 0.55, 1)
+multipliers = Dictionary[String, float]({
+"tower.range": 1.2
+})
+bonuses = Dictionary[String, float]({})

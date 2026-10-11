@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Card" format=3]
+
+[ext_resource type="Script" path="res://gameplay/cards/card.gd" id="1_card"]
+
+[resource]
+script = ExtResource("1_card")
+title = "Frost Bolts"
+description = "Mage shots chill enemies, slowing them by 40% for 2 seconds."
+color = Color(0.45, 0.75, 0.95, 1)
+multipliers = Dictionary[String, float]({})
+bonuses = Dictionary[String, float]({
+"mage.slow": 0.4
+})

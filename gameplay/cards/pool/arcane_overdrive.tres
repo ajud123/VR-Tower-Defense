@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Card" format=3]
+
+[ext_resource type="Script" path="res://gameplay/cards/card.gd" id="1_card"]
+
+[resource]
+script = ExtResource("1_card")
+title = "Arcane Overdrive"
+description = "Mage towers fire twice as fast."
+color = Color(0.5, 0.3, 0.8, 1)
+multipliers = Dictionary[String, float]({
+"mage.fire_rate": 2.0
+})
+bonuses = Dictionary[String, float]({})

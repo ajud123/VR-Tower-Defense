@@ -1,0 +1,53 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://cmb82krqxtwpy" path="res://gameplay/enemies/enemy.gd" id="1_enemy"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_body"]
+albedo_color = Color(0.42, 0.22, 0.58, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_body"]
+material = SubResource("StandardMaterial3D_body")
+radius = 0.025
+height = 0.05
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bar_back"]
+shading_mode = 0
+albedo_color = Color(0.1, 0.1, 0.1, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_bar_back"]
+material = SubResource("StandardMaterial3D_bar_back")
+size = Vector3(0.05, 0.006, 0.004)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bar_fill"]
+shading_mode = 0
+albedo_color = Color(0.3, 0.95, 0.35, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_bar_fill"]
+material = SubResource("StandardMaterial3D_bar_fill")
+size = Vector3(1, 0.006, 0.005)
+
+[node name="Tank" type="PathFollow3D"]
+rotation_mode = 0
+loop = false
+script = ExtResource("1_enemy")
+kind = "tank"
+base_health = 30.0
+base_speed = 0.034
+base_reward = 15
+hop_height = 0.005
+
+[node name="Body" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.025, 0)
+mesh = SubResource("SphereMesh_body")
+
+[node name="HealthBar" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.072, 0)
+
+[node name="Back" type="MeshInstance3D" parent="HealthBar"]
+cast_shadow = 0
+mesh = SubResource("BoxMesh_bar_back")
+
+[node name="Fill" type="MeshInstance3D" parent="HealthBar"]
+transform = Transform3D(0.048, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_bar_fill")

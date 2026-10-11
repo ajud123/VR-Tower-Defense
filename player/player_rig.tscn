@@ -1,0 +1,79 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://dtsrtmc4vhn8v" path="res://player/player_rig.gd" id="1_rig"]
+[ext_resource type="Script" uid="uid://dxpk36lyw6q53" path="res://player/desktop_player.gd" id="2_desktop"]
+[ext_resource type="PackedScene" path="res://player/hand.tscn" id="3_hand"]
+[ext_resource type="Script" path="res://interactables/interaction_ray.gd" id="4_ray"]
+
+[node name="PlayerRig" type="Node3D"]
+script = ExtResource("1_rig")
+
+[node name="XROrigin3D" type="XROrigin3D" parent="."]
+
+[node name="XRCamera3D" type="XRCamera3D" parent="XROrigin3D"]
+
+[node name="LeftHand" type="XRController3D" parent="XROrigin3D"]
+tracker = &"left_hand"
+pose = &"aim"
+
+[node name="Hand" parent="XROrigin3D/LeftHand" instance=ExtResource("3_hand")]
+
+[node name="RightHand" type="XRController3D" parent="XROrigin3D"]
+tracker = &"right_hand"
+pose = &"aim"
+
+[node name="Hand" parent="XROrigin3D/RightHand" instance=ExtResource("3_hand")]
+
+[node name="DesktopPlayer" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+script = ExtResource("2_desktop")
+
+[node name="Camera3D" type="Camera3D" parent="DesktopPlayer"]
+rotation = Vector3(-0.2, 0, 0)
+
+[node name="InteractionRay" type="RayCast3D" parent="DesktopPlayer/Camera3D"]
+enabled = false
+target_position = Vector3(0, 0, -6)
+collision_mask = 2
+script = ExtResource("4_ray")
+
+[node name="HoldPoint" type="Node3D" parent="DesktopPlayer/Camera3D"]
+transform = Transform3D(0.9659258, 0, -0.258819, 0, 1, 0, 0.258819, 0, 0.9659258, 0.2, -0.09, -0.2)
+
+[node name="HUD" type="CanvasLayer" parent="DesktopPlayer"]
+visible = false
+
+[node name="Help" type="Label" parent="DesktopPlayer/HUD"]
+offset_left = 16.0
+offset_top = 16.0
+mouse_filter = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+text = "Desktop testing
+WASD: move | Q/E: down/up | Shift: faster
+Mouse: look | Left click: press what the crosshair is on
+Build: click a shop tower, then a free tile | Right click: cancel
+Cards: click to pick up, click a slot / storage / anywhere to put down | Right click: drop
+Esc: release cursor | Left click: capture"
+
+[node name="Crosshair" type="Label" parent="DesktopPlayer/HUD"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 24
+text = "+"
+horizontal_alignment = 1
+vertical_alignment = 1

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Card" format=3]
+
+[ext_resource type="Script" path="res://gameplay/cards/card.gd" id="1_card"]
+
+[resource]
+script = ExtResource("1_card")
+title = "Sharpened Tips"
+description = "Archers deal +1 damage."
+color = Color(0.6, 0.45, 0.25, 1)
+multipliers = Dictionary[String, float]({})
+bonuses = Dictionary[String, float]({
+"archer.damage": 1.0
+})

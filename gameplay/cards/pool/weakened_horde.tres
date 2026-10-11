@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Card" format=3]
+
+[ext_resource type="Script" path="res://gameplay/cards/card.gd" id="1_card"]
+
+[resource]
+script = ExtResource("1_card")
+title = "Weakened Horde"
+description = "Enemies start with 75% health."
+color = Color(0.75, 0.2, 0.22, 1)
+multipliers = Dictionary[String, float]({
+"enemy.health": 0.75
+})
+bonuses = Dictionary[String, float]({})

@@ -1,0 +1,120 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://gameplay/cards/card_station.gd" id="1_station"]
+[ext_resource type="Script" path="res://gameplay/cards/card_drop_zone.gd" id="2_zone"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_felt"]
+albedo_color = Color(0.13, 0.3, 0.22, 1)
+roughness = 1.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_mat"]
+material = SubResource("StandardMaterial3D_felt")
+size = Vector3(0.36, 0.008, 0.46)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_slot"]
+albedo_color = Color(0.85, 0.68, 0.25, 1)
+metallic = 0.6
+roughness = 0.35
+
+[sub_resource type="BoxMesh" id="BoxMesh_slot"]
+material = SubResource("StandardMaterial3D_slot")
+size = Vector3(0.074, 0.1, 0.004)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_stand"]
+albedo_color = Color(0.3, 0.2, 0.12, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_stand"]
+material = SubResource("StandardMaterial3D_stand")
+size = Vector3(0.28, 0.02, 0.03)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_slot"]
+size = Vector3(0.074, 0.1, 0.01)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_storage"]
+size = Vector3(0.36, 0.02, 0.46)
+
+[node name="CardStation" type="Node3D"]
+script = ExtResource("1_station")
+
+[node name="Mat" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.004, -0.06)
+mesh = SubResource("BoxMesh_mat")
+
+[node name="Stand" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.018, 0.13)
+mesh = SubResource("BoxMesh_stand")
+
+[node name="Slots" type="Node3D" parent="."]
+
+[node name="Slot1" type="Node3D" parent="Slots"]
+transform = Transform3D(1, 0, 0, 0, 0.8253356, 0.5646425, 0, -0.5646425, 0.8253356, -0.088, 0.065, 0.11)
+
+[node name="Plate" type="MeshInstance3D" parent="Slots/Slot1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.005)
+mesh = SubResource("BoxMesh_slot")
+
+[node name="DropZone" type="StaticBody3D" parent="Slots/Slot1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.005)
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("2_zone")
+slot = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Slots/Slot1/DropZone"]
+shape = SubResource("BoxShape3D_slot")
+
+[node name="Slot2" type="Node3D" parent="Slots"]
+transform = Transform3D(1, 0, 0, 0, 0.8253356, 0.5646425, 0, -0.5646425, 0.8253356, 0, 0.065, 0.11)
+
+[node name="Plate" type="MeshInstance3D" parent="Slots/Slot2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.005)
+mesh = SubResource("BoxMesh_slot")
+
+[node name="DropZone" type="StaticBody3D" parent="Slots/Slot2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.005)
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("2_zone")
+slot = 1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Slots/Slot2/DropZone"]
+shape = SubResource("BoxShape3D_slot")
+
+[node name="Slot3" type="Node3D" parent="Slots"]
+transform = Transform3D(1, 0, 0, 0, 0.8253356, 0.5646425, 0, -0.5646425, 0.8253356, 0.088, 0.065, 0.11)
+
+[node name="Plate" type="MeshInstance3D" parent="Slots/Slot3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.005)
+mesh = SubResource("BoxMesh_slot")
+
+[node name="DropZone" type="StaticBody3D" parent="Slots/Slot3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.005)
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("2_zone")
+slot = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Slots/Slot3/DropZone"]
+shape = SubResource("BoxShape3D_slot")
+
+[node name="StorageZone" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.01, -0.06)
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("2_zone")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StorageZone"]
+shape = SubResource("BoxShape3D_storage")
+
+[node name="Storage" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.2588190, 0.9659258, 0, -0.9659258, 0.2588190, 0, 0.022, -0.02)
+
+[node name="Info" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.17, 0.2)
+pixel_size = 0.0006
+billboard = 2
+text = "CARDS"
+font_size = 28
+outline_size = 10
+autowrap_mode = 3
+width = 460.0

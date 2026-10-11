@@ -1,0 +1,48 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://player/hand.gd" id="1_hand"]
+[ext_resource type="Script" path="res://interactables/interaction_ray.gd" id="2_ray"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hand"]
+albedo_color = Color(0.92, 0.78, 0.64, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_hand"]
+material = SubResource("StandardMaterial3D_hand")
+size = Vector3(0.05, 0.03, 0.11)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_laser"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0.4, 0.9, 1, 0.7)
+
+[sub_resource type="BoxMesh" id="BoxMesh_laser"]
+material = SubResource("StandardMaterial3D_laser")
+size = Vector3(0.003, 0.003, 1)
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_poke"]
+radius = 0.025
+
+[node name="Hand" type="Node3D"]
+script = ExtResource("1_hand")
+
+[node name="HandMesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.04)
+mesh = SubResource("BoxMesh_hand")
+
+[node name="Laser" type="MeshInstance3D" parent="."]
+cast_shadow = 0
+mesh = SubResource("BoxMesh_laser")
+
+[node name="InteractionRay" type="RayCast3D" parent="."]
+target_position = Vector3(0, 0, -5)
+collision_mask = 2
+script = ExtResource("2_ray")
+
+[node name="PokeArea" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.02)
+collision_layer = 4
+collision_mask = 0
+monitoring = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PokeArea"]
+shape = SubResource("SphereShape3D_poke")

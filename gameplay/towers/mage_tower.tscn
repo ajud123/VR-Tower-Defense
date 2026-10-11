@@ -1,0 +1,46 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://gameplay/towers/tower.gd" id="1_tower"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mage"]
+albedo_color = Color(0.4, 0.25, 0.65, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_mage"]
+material = SubResource("StandardMaterial3D_mage")
+top_radius = 0.016
+bottom_radius = 0.025
+height = 0.11
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_orb"]
+albedo_color = Color(0.4, 0.9, 1, 1)
+emission_enabled = true
+emission = Color(0.3, 0.85, 1, 1)
+emission_energy_multiplier = 2.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_orb"]
+material = SubResource("StandardMaterial3D_orb")
+radius = 0.018
+height = 0.036
+
+[node name="MageTower" type="Node3D"]
+script = ExtResource("1_tower")
+display_name = "Mage"
+kind = "mage"
+cost = 140
+attack_range = 0.32
+damage = 3.0
+fire_interval = 0.7
+projectile_speed = 1.2
+projectile_color = Color(0.4, 0.9, 1, 1)
+muzzle_height = 0.13
+bonus_damage_vs = Dictionary[String, float]({
+"tank": 1.5
+})
+
+[node name="Body" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.055, 0)
+mesh = SubResource("CylinderMesh_mage")
+
+[node name="Orb" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.13, 0)
+mesh = SubResource("SphereMesh_orb")

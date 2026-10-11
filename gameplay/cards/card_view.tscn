@@ -1,0 +1,55 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://gameplay/cards/card_view.gd" id="1_view"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_card"]
+friction = 0.9
+bounce = 0.05
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_card"]
+size = Vector3(0.064, 0.09, 0.01)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_frame"]
+albedo_color = Color(0.95, 0.92, 0.82, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_frame"]
+material = SubResource("StandardMaterial3D_frame")
+size = Vector3(0.064, 0.09, 0.003)
+
+[sub_resource type="BoxMesh" id="BoxMesh_face"]
+size = Vector3(0.056, 0.082, 0.004)
+
+[node name="CardView" type="RigidBody3D"]
+collision_layer = 10
+mass = 0.05
+physics_material_override = SubResource("PhysicsMaterial_card")
+linear_damp = 2.5
+angular_damp = 1.0
+script = ExtResource("1_view")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_card")
+
+[node name="Frame" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_frame")
+
+[node name="Face" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_face")
+
+[node name="Title" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.028, 0.0025)
+pixel_size = 0.0004
+text = "Card"
+font_size = 22
+outline_size = 6
+autowrap_mode = 3
+width = 130.0
+
+[node name="Description" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.012, 0.0025)
+pixel_size = 0.0004
+text = ""
+font_size = 13
+outline_size = 4
+autowrap_mode = 3
+width = 130.0

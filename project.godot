@@ -19,6 +19,17 @@ config/icon="res://icon.svg"
 
 project/assembly_name="VR-Tower-Defense"
 
+[layer_names]
+
+3d_physics/layer_1="world"
+3d_physics/layer_2="interactable"
+3d_physics/layer_3="hands"
+3d_physics/layer_4="grabbable"
+
+[physics]
+
+3d/physics_engine="Jolt Physics"
+
 [rendering]
 
 renderer/rendering_method="mobile"

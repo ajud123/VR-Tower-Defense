@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Card" format=3]
+
+[ext_resource type="Script" path="res://gameplay/cards/card.gd" id="1_card"]
+
+[resource]
+script = ExtResource("1_card")
+title = "Heavy Shells"
+description = "Cannons deal double damage."
+color = Color(0.3, 0.3, 0.34, 1)
+multipliers = Dictionary[String, float]({
+"cannon.damage": 2.0
+})
+bonuses = Dictionary[String, float]({})

@@ -1,0 +1,41 @@
+[gd_scene format=3 uid="uid://d4i53x4wnq3nc"]
+
+[ext_resource type="Script" path="res://main_menu/main_menu.gd" id="1_menu"]
+[ext_resource type="PackedScene" path="res://player/player_rig.tscn" id="2_rig"]
+[ext_resource type="PackedScene" path="res://interactables/push_button.tscn" id="3_button"]
+
+[node name="MainMenu" type="Node3D" unique_id=1010042180]
+script = ExtResource("1_menu")
+
+[node name="PlayerRig" parent="." instance=ExtResource("2_rig")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.5)
+
+[node name="Floor" type="CSGBox3D" parent="." unique_id=1062619124]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4624939, -0.0871582, 0.08157396)
+size = Vector3(3.8739624, 0.1743164, 4.9161377)
+
+[node name="Pedestal" type="CSGBox3D" parent="." unique_id=131226767]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -1.6028256)
+size = Vector3(0.6, 1, 0.6)
+
+[node name="PlayButton" parent="." instance=ExtResource("3_button")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -1.6028256)
+text = "PLAY"
+
+[node name="Title" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.05, -2.1)
+text = "ParkBench TD"
+font_size = 96
+outline_size = 24
+modulate = Color(1, 0.86, 0.45, 1)
+
+[node name="Subtitle" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.72, -2.1)
+text = "Poke the button, or point at it and pull the trigger"
+font_size = 28
+outline_size = 10
+
+[node name="SpotLight3D" type="SpotLight3D" parent="." unique_id=882061644]
+transform = Transform3D(1, 0, 0, 0, 0.43562385, 0.9001288, 0, -0.9001288, 0.43562385, 0, 1.4023498, 0)
+
+[connection signal="pressed" from="PlayButton" to="." method="_on_play_button_pressed"]

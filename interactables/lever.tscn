@@ -1,0 +1,53 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://interactables/lever.gd" id="1_lever"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_arm"]
+albedo_color = Color(0.75, 0.75, 0.78, 1)
+metallic = 0.8
+roughness = 0.3
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_arm"]
+material = SubResource("StandardMaterial3D_arm")
+top_radius = 0.012
+bottom_radius = 0.016
+height = 0.3
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_knob"]
+albedo_color = Color(0.9, 0.12, 0.1, 1)
+roughness = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_knob"]
+material = SubResource("StandardMaterial3D_knob")
+radius = 0.045
+height = 0.09
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_knob"]
+radius = 0.07
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_hub"]
+material = SubResource("StandardMaterial3D_arm")
+top_radius = 0.035
+bottom_radius = 0.035
+height = 0.05
+
+[node name="Lever" type="StaticBody3D"]
+collision_layer = 10
+collision_mask = 0
+script = ExtResource("1_lever")
+
+[node name="Hub" type="MeshInstance3D" parent="."]
+transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("CylinderMesh_hub")
+
+[node name="Arm" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
+mesh = SubResource("CylinderMesh_arm")
+
+[node name="Knob" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
+mesh = SubResource("SphereMesh_knob")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
+shape = SubResource("SphereShape3D_knob")
