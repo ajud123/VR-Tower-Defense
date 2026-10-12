@@ -15,9 +15,18 @@ run/main_scene="uid://d4i53x4wnq3nc"
 config/features=PackedStringArray("4.6")
 config/icon="res://icon.svg"
 
+[autoload]
+
+XRToolsUserSettings="*uid://bqgb8i74tm0t"
+XRToolsRumbleManager="*uid://by853dk86g1qw"
+
 [dotnet]
 
 project/assembly_name="VR-Tower-Defense"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/godot-xr-tools/plugin.cfg")
 
 [layer_names]
 
@@ -37,5 +46,5 @@ renderer/rendering_method="mobile"
 [xr]
 
 openxr/enabled=true
-openxr/extensions/debug_utils=4
+openxr/extensions/render_model=true
 shaders/enabled=true
