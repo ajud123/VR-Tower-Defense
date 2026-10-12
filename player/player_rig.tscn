@@ -34,6 +34,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.02, -0.05, 0)
 script = ExtResource("3_mlb0e")
 teleport_button_action = "ax_button"
 player_material = ExtResource("4_8x7yg")
+hand_offset_mode = 4
 metadata/_custom_type_script = "uid://blaa027erhjlp"
 
 [node name="PlayerBody" type="CharacterBody3D" parent="XROrigin3D" unique_id=181938334]
