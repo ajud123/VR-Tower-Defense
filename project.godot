@@ -28,6 +28,10 @@ project/assembly_name="VR-Tower-Defense"
 
 enabled=PackedStringArray("res://addons/godot-xr-tools/plugin.cfg")
 
+[godot_xr_tools]
+
+input/default_snap_turning=false
+
 [layer_names]
 
 3d_physics/layer_1="world"

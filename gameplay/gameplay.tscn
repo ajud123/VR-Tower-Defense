@@ -141,8 +141,6 @@ albedo_color = Color(0.12, 0.14, 0.16, 1)
 material = SubResource("StandardMaterial3D_sign")
 size = Vector3(0.8, 0.16, 0.015)
 
-[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_53nod"]
-
 [node name="Gameplay" type="Node3D" unique_id=504317674]
 script = ExtResource("1_gameplay")
 
@@ -236,11 +234,15 @@ shape = SubResource("BoxShape3D_TableTop")
 
 [node name="NearBench" type="CollisionShape3D" parent="WorldCollision" unique_id=1720933176]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.41, 0.705)
+visible = false
 shape = SubResource("BoxShape3D_NearBench")
+disabled = true
 
 [node name="FarBench" type="CollisionShape3D" parent="WorldCollision" unique_id=577324314]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.41, -0.705)
+visible = false
 shape = SubResource("BoxShape3D_FarBench")
+disabled = true
 
 [node name="Board" type="CollisionShape3D" parent="WorldCollision" unique_id=1192354124]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7835, 0)
@@ -450,12 +452,6 @@ outline_size = 24
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 5)
 game = NodePath("../Game")
 station = NodePath("../PicnicTable/CardStation")
-
-[node name="GroundPlane" type="StaticBody3D" parent="." unique_id=1697600951]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="GroundPlane" unique_id=755324724]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4624939, -0.0871582, 0.08157396)
-shape = SubResource("WorldBoundaryShape3D_53nod")
 
 [connection signal="ended" from="Game" to="." method="_on_game_ended"]
 [connection signal="pressed" from="PicnicTable/MenuButton" to="." method="_on_menu_button_pressed"]
