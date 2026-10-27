@@ -6,6 +6,7 @@
 script = ExtResource("1_card")
 title = "Heavy Shells"
 description = "Cannons deal double damage."
+rarity = 1
 color = Color(0.3, 0.3, 0.34, 1)
 multipliers = Dictionary[String, float]({
 "cannon.damage": 2.0

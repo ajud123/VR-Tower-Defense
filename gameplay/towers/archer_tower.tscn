@@ -10,10 +10,10 @@
 script = ExtResource("1_tower")
 display_name = "Archer"
 kind = "archer"
-cost = 75
+cost = 60
 attack_range = 0.24
 damage = 1.0
-fire_interval = 0.75
+fire_interval = 0.667
 projectile_speed = 1.0
 projectile_color = Color(1, 0.9, 0.5, 1)
 projectile_model = ExtResource("ammo")

@@ -32,6 +32,15 @@ They were recoloured (background removed, glyph white) for in-game tinting.
 | health.svg | hearts | Skoll |
 | skeleton.svg | skeleton | Skoll |
 | vampire.svg | vampire-dracula | Delapouite |
+| ghost.svg | ghost | Lorc |
+| catapult.svg | catapult | HeavenlyDog |
+| chain.svg | lightning-arc | Lorc |
+| multishot.svg | striking-arrows | Lorc |
+| cluster.svg | cluster-bomb | Lorc |
+| pierce.svg | armor-punch | Delapouite |
+| shatter.svg | shattered-glass | Lorc |
+| knockback.svg | earth-crack | Lorc |
+| dps.svg | sword-wound | Lorc |
 
 `play.svg` was made for this project.
 

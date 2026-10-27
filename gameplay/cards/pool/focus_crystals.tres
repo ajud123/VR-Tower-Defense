@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Card" format=3]
+
+[ext_resource type="Script" path="res://gameplay/cards/card.gd" id="1_card"]
+
+[resource]
+script = ExtResource("1_card")
+title = "Focus Crystals"
+description = "Mage towers reach 20% further."
+rarity = 0
+color = Color(0.35, 0.6, 0.85, 1)
+multipliers = Dictionary[String, float]({
+"mage.range": 1.2
+})
+bonuses = Dictionary[String, float]({})

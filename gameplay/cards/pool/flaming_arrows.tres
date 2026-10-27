@@ -5,9 +5,10 @@
 [resource]
 script = ExtResource("1_card")
 title = "Flaming Arrows"
-description = "Archer shots set enemies on fire, burning 1.5 damage per second for 3 seconds."
+description = "Archer shots set enemies on fire, burning 2.5 damage per second for 3 seconds."
+rarity = 1
 color = Color(0.9, 0.45, 0.12, 1)
 multipliers = Dictionary[String, float]({})
 bonuses = Dictionary[String, float]({
-"archer.burn_dps": 1.5
+"archer.burn_dps": 2.5
 })

@@ -48,7 +48,7 @@ outline_size = 10
 [node name="Credits" type="Label3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.55, -2.1)
 modulate = Color(1, 1, 1, 0.6)
-text = "Icons by Lorc, Delapouite and Skoll from game-icons.net (CC BY 3.0)"
+text = "Icons by Lorc, Delapouite, Skoll and HeavenlyDog from game-icons.net (CC BY 3.0)"
 font_size = 18
 outline_size = 6
 

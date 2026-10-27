@@ -5,9 +5,9 @@
 [resource]
 script = ExtResource("1_card")
 title = "Rapid Fire"
-description = "All towers fire 15% faster."
+description = "All towers fire 25% faster."
 color = Color(0.85, 0.7, 0.2, 1)
 multipliers = Dictionary[String, float]({
-"tower.fire_rate": 1.15
+"tower.fire_rate": 1.25
 })
 bonuses = Dictionary[String, float]({})

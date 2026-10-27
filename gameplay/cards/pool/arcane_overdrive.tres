@@ -5,9 +5,10 @@
 [resource]
 script = ExtResource("1_card")
 title = "Arcane Overdrive"
-description = "Mage towers fire twice as fast."
+description = "Mage towers fire 50% faster."
+rarity = 1
 color = Color(0.5, 0.3, 0.8, 1)
 multipliers = Dictionary[String, float]({
-"mage.fire_rate": 2.0
+"mage.fire_rate": 1.5
 })
 bonuses = Dictionary[String, float]({})

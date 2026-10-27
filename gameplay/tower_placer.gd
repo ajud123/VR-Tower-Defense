@@ -16,8 +16,8 @@ const NO_CELL := Vector2i(-1, -1)
 const BUILDABLE_COLOR := Color(0.3, 1.0, 0.4, 0.55)
 const BLOCKED_COLOR := Color(1.0, 0.25, 0.2, 0.55)
 ## Each tower of the same kind already on the board makes the next one cost
-## this much more (0.25 = +25%), so mixing tower types pays off.
-const SAME_KIND_PRICE_GROWTH := 0.25
+## this much more (0.35 = +35%), so mixing tower types pays off.
+const SAME_KIND_PRICE_GROWTH := 0.35
 
 @export var board: Board
 @export var game: GameState

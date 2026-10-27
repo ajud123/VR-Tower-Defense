@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Card" format=3]
+
+[ext_resource type="Script" path="res://gameplay/cards/card.gd" id="1_card"]
+
+[resource]
+script = ExtResource("1_card")
+title = "Siege Crew"
+description = "Catapults fire 50% faster."
+rarity = 1
+color = Color(0.55, 0.4, 0.25, 1)
+multipliers = Dictionary[String, float]({
+"catapult.fire_rate": 1.5
+})
+bonuses = Dictionary[String, float]({})

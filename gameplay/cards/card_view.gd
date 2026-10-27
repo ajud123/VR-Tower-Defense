@@ -46,10 +46,18 @@ func _ready() -> void:
 	_face_material.albedo_color = card.color.darkened(FACE_DARKEN)
 	_face_material.emission = card.color
 	$Face.material_override = _face_material
+	var frame := StandardMaterial3D.new()
+	frame.albedo_color = Card.RARITY_COLORS[card.rarity]
+	if card.rarity != Card.Rarity.COMMON:
+		frame.metallic = 0.7
+		frame.roughness = 0.3
+	if card.rarity == Card.Rarity.EPIC:
+		frame.emission_enabled = true
+		frame.emission = Card.RARITY_COLORS[card.rarity]
+		frame.emission_energy_multiplier = 0.4
+	$Frame.material_override = frame
 	$Title.text = card.title
-	$Back.text = "%s
-
-%s" % [card.title, card.description]
+	$Back.text = "%s\n%s\n\n%s" % [card.title, Card.RARITY_NAMES[card.rarity], card.description]
 	_draw_art()
 
 

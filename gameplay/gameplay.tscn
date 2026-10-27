@@ -368,11 +368,11 @@ script = ExtResource("14_sign")
 game = NodePath("../../Game")
 
 [node name="PostLeft" type="MeshInstance3D" parent="PicnicTable/StatusSign" unique_id=1157323496]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 0.1, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 0.1, -0.02)
 mesh = SubResource("BoxMesh_sign_post")
 
 [node name="PostRight" type="MeshInstance3D" parent="PicnicTable/StatusSign" unique_id=1931691423]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 0.1, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 0.1, -0.02)
 mesh = SubResource("BoxMesh_sign_post")
 
 [node name="Panel" type="MeshInstance3D" parent="PicnicTable/StatusSign" unique_id=1289587146]

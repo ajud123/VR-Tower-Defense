@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Card" format=3]
+
+[ext_resource type="Script" path="res://gameplay/cards/card.gd" id="1_card"]
+
+[resource]
+script = ExtResource("1_card")
+title = "Shatter"
+description = "Slowed enemies take 50% more damage from everything."
+rarity = 1
+color = Color(0.4, 0.8, 0.95, 1)
+multipliers = Dictionary[String, float]({})
+bonuses = Dictionary[String, float]({
+"enemy.shatter": 0.5
+})

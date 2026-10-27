@@ -21,6 +21,13 @@ const STAT_COLORS := {
 	"speed": Color(0.85, 0.75, 1.0),
 	"reward": Color(1.0, 0.82, 0.25),
 	"damage_taken": Color(1.0, 0.45, 0.4),
+	"chain": Color(0.6, 0.85, 1.0),
+	"multishot": Color(1.0, 0.9, 0.5),
+	"cluster": Color(1.0, 0.6, 0.25),
+	"pierce": Color(0.85, 0.88, 0.95),
+	"knockback": Color(0.9, 0.7, 0.45),
+	"shatter": Color(0.6, 0.9, 1.0),
+	"dps": Color(1.0, 0.55, 0.45),
 }
 
 

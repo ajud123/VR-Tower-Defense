@@ -6,6 +6,10 @@ extends Node3D
 ## Every card costs `price_step` more than the one before.
 
 const MESSAGE_TIME_MSEC := 2500
+## Each common in a row lowers the common weight by this much (6:3:1, then
+## 5:3:1, 4:3:1, ...), down to MIN_COMMON_WEIGHT. A rare or epic resets it.
+const GRACE_STEP := 1.0
+const MIN_COMMON_WEIGHT := 1.0
 
 @export var game: GameState
 @export var station: CardStation
@@ -20,6 +24,7 @@ const MESSAGE_TIME_MSEC := 2500
 @onready var _display: Node3D = $Display
 
 var _message_until: int = 0
+var _commons_in_a_row: int = 0
 
 
 func _ready() -> void:
@@ -54,11 +59,39 @@ func _on_lever_pulled() -> void:
 		_say("NOT ENOUGH\nGOLD\n\n%d needed" % price)
 		return
 	price += price_step
-	var card: Card = choices.pick_random()
+	var card := _pick_weighted(choices)
 	# Pop it out of the slot towards the player.
 	station.spawn_card(card, _output.global_position, global_basis.z * 1.2 + Vector3.UP * 0.8)
-	_say("YOU GOT\n%s!" % card.title.to_upper())
+	_say("YOU GOT\n%s!\n\n%s" % [card.title.to_upper(), Card.RARITY_NAMES[card.rarity].to_upper()])
 	_build_display()
+
+
+## Rolls a rarity (Card.RARITY_WEIGHTS, among rarities with cards left),
+## then a random card of that rarity. Grace: every common in a row makes
+## the next common less likely, until a rare or epic comes out.
+func _pick_weighted(cards: Array[Card]) -> Card:
+	var weights := {}
+	for card in cards:
+		weights[card.rarity] = _rarity_weight(card.rarity)
+	var total := 0.0
+	for rarity in weights:
+		total += weights[rarity]
+	var roll := randf() * total
+	var picked: Card.Rarity = weights.keys().back()
+	for rarity in weights:
+		roll -= weights[rarity]
+		if roll <= 0.0:
+			picked = rarity
+			break
+	_commons_in_a_row = _commons_in_a_row + 1 if picked == Card.Rarity.COMMON else 0
+	return cards.filter(func(card: Card) -> bool: return card.rarity == picked).pick_random()
+
+
+func _rarity_weight(rarity: Card.Rarity) -> float:
+	var weight: float = Card.RARITY_WEIGHTS[rarity]
+	if rarity == Card.Rarity.COMMON:
+		weight = maxf(weight - _commons_in_a_row * GRACE_STEP, MIN_COMMON_WEIGHT)
+	return weight
 
 
 func is_open() -> bool:

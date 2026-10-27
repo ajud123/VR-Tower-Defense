@@ -5,7 +5,7 @@ extends Node
 
 signal ended(won: bool)
 
-@export var starting_lives: int = 20
+@export var starting_lives: int = 10
 @export var starting_gold: int = 200
 ## The player's cards. Anything with access to the game reaches them here.
 @export var upgrades: Upgrades

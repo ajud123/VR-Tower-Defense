@@ -5,9 +5,11 @@
 [resource]
 script = ExtResource("1_card")
 title = "Tank Buster"
-description = "Tanks take 50% more damage."
+description = "Zombies and skeletons take double damage."
+rarity = 1
 color = Color(0.42, 0.22, 0.58, 1)
 multipliers = Dictionary[String, float]({
-"tank.damage_taken": 1.5
+"tank.damage_taken": 2.0,
+"skeleton.damage_taken": 2.0
 })
 bonuses = Dictionary[String, float]({})

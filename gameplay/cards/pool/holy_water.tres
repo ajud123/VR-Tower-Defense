@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Card" format=3]
+
+[ext_resource type="Script" path="res://gameplay/cards/card.gd" id="1_card"]
+
+[resource]
+script = ExtResource("1_card")
+title = "Holy Water"
+description = "Vampires take 75% more damage."
+rarity = 1
+color = Color(0.3, 0.5, 0.85, 1)
+multipliers = Dictionary[String, float]({
+"vampire.damage_taken": 1.75
+})
+bonuses = Dictionary[String, float]({})

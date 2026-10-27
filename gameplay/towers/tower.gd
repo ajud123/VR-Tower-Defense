@@ -24,6 +24,9 @@ extends Node3D
 @export var projectile_model_scale: float = 0.02
 ## How high shots arc above a straight line, in metres. 0 flies straight.
 @export var projectile_arc: float = 0.0
+## What a splash hit looks like: a fiery explosion, or a dust cloud with
+## flying rocks (for things that just land hard, like boulders).
+@export var splash_explodes: bool = true
 ## Height shots leave from, relative to the tower's base.
 @export var muzzle_height: float = 0.1
 ## Optional weapon model that turns to face what the tower shoots at.
@@ -78,6 +81,38 @@ func get_slow() -> float:
 	return clampf(_bonus("slow"), 0.0, 0.9)
 
 
+## Damage per second against one enemy in the way of every shot, counting
+## multishot's extra targets. Leaves out splash, burn and chain bonuses,
+## which depend on how many enemies get caught.
+func get_dps() -> float:
+	return get_damage() / get_fire_interval() * (1 + get_multishot())
+
+
+## Extra enemies each shot jumps on to after hitting (chain lightning).
+func get_chain() -> int:
+	return roundi(_bonus("chain"))
+
+
+## Extra targets shot at the same time.
+func get_multishot() -> int:
+	return roundi(_bonus("multishot"))
+
+
+## Smaller explosions set off around each splash hit.
+func get_cluster() -> int:
+	return roundi(_bonus("cluster"))
+
+
+## Whether shots ignore enemy resistances (armour).
+func get_pierce() -> bool:
+	return _bonus("pierce") > 0.0
+
+
+## How far back along the path each hit pushes an enemy, in metres.
+func get_knockback() -> float:
+	return _bonus("knockback")
+
+
 ## The tower's current stats, cards included, as {"icon", "text"} rows for
 ## the shop's stat board. Icon keys are from gameplay/icons/.
 func stat_rows(tile_size: float) -> Array[Dictionary]:
@@ -94,6 +129,16 @@ func stat_rows(tile_size: float) -> Array[Dictionary]:
 		rows.append({"icon": "burn_dps", "text": "%s/s" % _number(get_burn_dps())})
 	if get_slow() > 0.0:
 		rows.append({"icon": "slow", "text": "-%d%%" % roundi(get_slow() * 100.0)})
+	if get_multishot() > 0:
+		rows.append({"icon": "multishot", "text": "+%d" % get_multishot()})
+	if get_chain() > 0:
+		rows.append({"icon": "chain", "text": "+%d" % get_chain()})
+	if get_cluster() > 0:
+		rows.append({"icon": "cluster", "text": "+%d" % get_cluster()})
+	if get_pierce():
+		rows.append({"icon": "pierce", "text": "yes"})
+	if get_knockback() > 0.0:
+		rows.append({"icon": "knockback", "text": "%.1f" % (get_knockback() / tile_size)})
 	return rows
 
 
@@ -101,27 +146,30 @@ func _process(delta: float) -> void:
 	if preview:
 		return
 	_cooldown -= delta
-	var target := _find_target()
-	if target:
-		_aim_at(target)
-		if _cooldown <= 0.0:
-			_cooldown = get_fire_interval()
+	var targets := _targets_in_range()
+	if targets.is_empty():
+		return
+	_aim_at(targets[0])
+	if _cooldown <= 0.0:
+		_cooldown = get_fire_interval()
+		# The furthest along first, plus extras with multishot.
+		for target in targets.slice(0, 1 + get_multishot()):
 			_fire(target)
 
 
-func _find_target() -> Enemy:
+## Living enemies in reach, furthest along the path first.
+func _targets_in_range() -> Array[Enemy]:
 	var reach := get_range()
-	var best: Enemy = null
+	var found: Array[Enemy] = []
 	for enemy: Enemy in get_tree().get_nodes_in_group("enemies"):
 		if enemy.is_dead():
 			continue
 		var offset := enemy.global_position - global_position
 		offset.y = 0.0
-		if offset.length() > reach:
-			continue
-		if best == null or enemy.progress > best.progress:
-			best = enemy
-	return best
+		if offset.length() <= reach:
+			found.append(enemy)
+	found.sort_custom(func(a: Enemy, b: Enemy) -> bool: return a.progress > b.progress)
+	return found
 
 
 func _aim_at(target: Enemy) -> void:

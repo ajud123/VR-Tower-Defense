@@ -45,6 +45,8 @@ var speed: float
 var reward: int
 ## Multiplies all damage this enemy takes.
 var damage_taken: float = 1.0
+## Extra damage taken while slowed (0.5 = +50%), from the Shatter card.
+var shatter: float = 0.0
 
 var _dead := false
 var _burn_dps: float = 0.0
@@ -70,6 +72,7 @@ func setup(health_scale: float, speed_scale: float, upgrades: Upgrades) -> void:
 	speed = base_speed * speed_scale * mult.call("speed")
 	reward = roundi(base_reward * mult.call("reward"))
 	damage_taken = mult.call("damage_taken")
+	shatter = upgrades.bonus("enemy", kind, "shatter") if upgrades else 0.0
 
 
 func _ready() -> void:
@@ -83,6 +86,8 @@ func _ready() -> void:
 		mesh.material_overlay = _tint
 		mesh.transparency = body_transparency
 	if _animation:
+		# The Kenney walk cycles are imported as play-once; keep them going.
+		_animation.get_animation("walk").loop_mode = Animation.LOOP_LINEAR
 		_animation.play("walk")
 	_flames = Effects.trail(BURN_TINT, 0.006, 0.4)
 	_flames.gravity = Vector3(0, 0.12, 0)
@@ -127,7 +132,8 @@ func is_dead() -> bool:
 func take_damage(amount: float, source: String = "") -> void:
 	if _dead:
 		return
-	health -= amount * damage_taken * resistances.get(source, 1.0)
+	var slowed_extra := 1.0 + shatter if _slow_time > 0.0 else 1.0
+	health -= amount * damage_taken * slowed_extra * resistances.get(source, 1.0)
 	_update_health_bar()
 	if health <= 0.0:
 		_dead = true
@@ -142,6 +148,14 @@ func ignite(damage_per_second: float, duration: float) -> void:
 
 
 ## Slows the enemy by a fraction (0.4 = 40% slower). The strongest slow wins.
+## Pushes it back along the path by `distance` metres. Bosses (anything
+## costing more than one life) stand their ground.
+func knock_back(distance: float) -> void:
+	if _dead or lives_cost > 1:
+		return
+	progress = maxf(progress - distance, 0.0)
+
+
 func chill(fraction: float, duration: float) -> void:
 	_slow = maxf(fraction, _slow if _slow_time > 0.0 else 0.0)
 	_slow_time = maxf(_slow_time, duration)

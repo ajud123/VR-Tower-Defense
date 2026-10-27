@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Card" format=3]
+
+[ext_resource type="Script" path="res://gameplay/cards/card.gd" id="1_card"]
+
+[resource]
+script = ExtResource("1_card")
+title = "Heavy Boulders"
+description = "Catapults deal +4 damage."
+rarity = 0
+color = Color(0.5, 0.45, 0.4, 1)
+multipliers = Dictionary[String, float]({})
+bonuses = Dictionary[String, float]({
+"catapult.damage": 4.0
+})

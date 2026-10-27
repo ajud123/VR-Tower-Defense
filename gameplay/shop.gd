@@ -35,9 +35,13 @@ func _process(_delta: float) -> void:
 			if item.has_method("get_tower") and item.is_picked():
 				focus = item
 	var tower: Tower = focus.get_tower() if focus else null
+	# One entry per slot on the board, {} for empty ones. The last slot
+	# (bottom right) always holds the tower's DPS.
 	var rows: Array[Dictionary] = []
 	if tower:
-		rows = tower.stat_rows(focus.placer.board.tile_size)
+		rows = tower.stat_rows(focus.placer.board.tile_size).slice(0, MAX_ROWS - 1)
+		rows.resize(MAX_ROWS - 1)
+		rows.append({"icon": "dps", "text": "%.1f" % tower.get_dps()})
 	if tower == _shown and rows == _shown_rows:
 		return
 	_shown = tower
@@ -45,7 +49,7 @@ func _process(_delta: float) -> void:
 	_header.text = tower.display_name.to_upper() if tower else "SHOP"
 	_header.font_size = 40 if tower else 64
 	for i in MAX_ROWS:
-		var used := i < rows.size()
+		var used := i < rows.size() and not rows[i].is_empty()
 		_row_icons[i].visible = used
 		_row_labels[i].visible = used
 		if used:
@@ -68,7 +72,8 @@ func _build_board() -> void:
 		post.material = wood
 		var post_mesh := MeshInstance3D.new()
 		post_mesh.mesh = post
-		post_mesh.position = Vector3(side * (PANEL_SIZE.x * 0.5 - 0.01), PANEL_HEIGHT * 0.5, -0.01)
+		# Behind the panel, so they never poke through its face.
+		post_mesh.position = Vector3(side * (PANEL_SIZE.x * 0.5 - 0.01), PANEL_HEIGHT * 0.5, -0.016)
 		board.add_child(post_mesh)
 
 	var slate := StandardMaterial3D.new()

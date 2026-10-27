@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://c6kj5xicwgcrk"
-path="res://.godot/imported/tower-round-middle-b.glb-549e2adeddd60506c1b08c5270b164e6.scn"
+uid="uid://f20qhh70tprp"
+path="res://.godot/imported/tower-round-middle-a.glb-40556b6bcdf504b727937a9669fc8fe2.scn"
 
 [deps]
 
-source_file="res://assets/kenney/tower_defense/tower-round-middle-b.glb"
-dest_files=["res://.godot/imported/tower-round-middle-b.glb-549e2adeddd60506c1b08c5270b164e6.scn"]
+source_file="res://assets/kenney/tower_defense/tower-round-middle-a.glb"
+dest_files=["res://.godot/imported/tower-round-middle-a.glb-40556b6bcdf504b727937a9669fc8fe2.scn"]
 
 [params]
 

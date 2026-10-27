@@ -52,31 +52,32 @@ editor.
 ## How a game plays (current build)
 
 - 20 scripted waves come down the path (the status sign shows each wave's
-  name). Enemies also get 15% more health every wave (20% from wave 6).
+  name). Enemies also get 10% more health every wave (25% from wave 6).
   - **Orc**: the basic enemy.
   - **Zombie** (tank): slow, lots of HP, more gold.
   - **Ghost**: fast and fragile.
   - **Skeleton**: armoured, takes half damage from arrows.
   - **Vampire** (boss, waves 10 and 20): huge HP, heals over time, and costs
-    5 lives if it reaches the castle.
+    3 lives if it reaches the castle.
 - Waves are a table at the top of `gameplay/wave_spawner.gd`: each wave is a
   name and groups like `["ghost", 8, 0.5]` (8 ghosts, 0.5 s apart).
 - Each enemy that reaches the castle costs a life. At 0 lives it's game over;
   clearing all 20 waves wins. Use RESTART or MENU on the table afterwards.
 - Killing enemies earns gold, and clearing a wave pays a bonus (30 + 10 per wave).
   Gold buys towers from the shop tray (hover one to see its stats):
-  Archer (75, fast single shots), Cannon (100, slow splash), Mage (150, long
+  Archer (60, fast single shots), Cannon (100, slow splash), Mage (150, long
   range, 1.5x damage vs zombies and vampires) and Catapult (200, covers the
   whole board, slow, boulders with the same splash as the cannon, 1.5x damage
   vs skeletons).
 - Every tower of a kind you already have makes the next one of that kind
-  cost 25% more (the price tag shows the current price), so mixing tower
+  cost 35% more (the price tag shows the current price), so mixing tower
   types is cheaper. Selling one with the hammer brings the price back down.
 - Towers can only go on free grass tiles, not on the path or on another tower.
 - Each shop tower has a price tag in front of it (red when you can't afford
   it). The board behind the tray shows the stats of the tower you're
   hovering: damage, attacks per second, range in tiles, and extras like
-  splash, burn, slow or bonus damage against tanks.
+  splash, burn, slow or bonus damage against tanks. The bottom-right number
+  is its damage per second against a single enemy.
 
 **Selling towers (the hammer)**
 - The hammer lies on the table between the board and the shop. Smash a tower
@@ -90,6 +91,14 @@ editor.
 - The CARD-O-MATIC vending machine behind the bench opens at wave 2. Pull its
   lever (grab and pull down in VR, click on desktop) to buy a random card you
   don't own yet: 100 gold, +150 for each card after that.
+- 26 cards: 12 common, 10 rare, 4 epic. Besides plain stat boosts, some
+  change what a tower does: fire or frost shots, armour-piercing arrows,
+  boulders that knock enemies back, Shatter (slowed enemies take +50%), and
+  the epics Chain Lightning, Multishot, Cluster Bombs and Weakened Horde.
+- Cards are common (cream frame), rare (silver-blue) or epic (gold, glows).
+  The machine first rolls the rarity (common 6 : rare 3 : epic 1), then a
+  card of that rarity. Every common in a row makes the next common less
+  likely (5:3:1, 4:3:1, ... down to 1:3:1) until a rare or epic comes out.
 - Bought cards pop out of the machine onto the ground. Pick them up and put
   them in one of the 3 gold slots on the card station (left of the table) to
   activate them, in its storage mat, or down anywhere (they're physical).

@@ -24,7 +24,7 @@ rotation_mode = 0
 loop = false
 script = ExtResource("1_enemy")
 kind = "blob"
-base_health = 7.0
+base_health = 6.0
 base_speed = 0.055
 base_reward = 4
 

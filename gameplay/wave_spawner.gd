@@ -42,14 +42,14 @@ const GROUP_PAUSE := 2.0
 @export var game: GameState
 @export var first_wave_delay: float = 15.0
 @export var time_between_waves: float = 10.0
-## Extra enemy health per wave after the first (0.15 = +15% each wave).
+## Extra enemy health per wave after the first (0.1 = +10% each wave).
 ## Kept low: towers don't get stronger by themselves, only cards do.
-@export var health_growth: float = 0.15
+@export var health_growth: float = 0.1
 ## From this wave on, health grows by late_health_growth per wave instead.
 @export var late_from_wave: int = 6
-@export var late_health_growth: float = 0.2
+@export var late_health_growth: float = 0.25
 ## Extra enemy speed per wave after the first.
-@export var speed_growth: float = 0.04
+@export var speed_growth: float = 0.03
 ## Gold paid for clearing a wave: base + growth * wave number.
 @export var wave_clear_bonus: int = 30
 @export var wave_clear_bonus_growth: int = 10

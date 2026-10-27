@@ -33,6 +33,10 @@ const CASTLE_PARTS := [
 ]
 ## Castle size relative to a tile.
 const CASTLE_SCALE := 0.7
+## Tiles are shaded slightly differently (a checkerboard plus a little
+## noise) so you can tell them apart. This many shades, up to this dark.
+const TILE_SHADES := 4
+const TILE_SHADE_RANGE := 0.12
 
 @export var columns: int = 12:
 	set(value):
@@ -74,6 +78,8 @@ var _towers: Dictionary = {}  # Vector2i -> Node3D
 var _visuals: Node3D
 var _enemy_path: Path3D
 var _rebuild_queued := false
+## [material, shade] -> darkened copy, see _shaded().
+var _shades: Dictionary = {}
 
 
 func _ready() -> void:
@@ -228,6 +234,29 @@ func _build_tiles() -> void:
 			var basis := Basis(Vector3.UP, turns * PI * 0.5).scaled(Vector3.ONE * tile_size)
 			tile.transform = Transform3D(basis, Vector3(center.x, BASE_THICKNESS, center.z))
 			tiles.add_child(tile)
+			_shade_tile(tile, cell)
+
+
+## Darkens a tile a little, depending on where it is. Shaded copies of the
+## tile material are shared, so there are only TILE_SHADES of them per material.
+func _shade_tile(tile: Node3D, cell: Vector2i) -> void:
+	var shade := (cell.x + cell.y) % 2 * 2 + absi(hash(cell)) % 2
+	if shade == 0:
+		return
+	for mesh: MeshInstance3D in tile.find_children("*", "MeshInstance3D", true, false):
+		for i in mesh.mesh.get_surface_count():
+			var material := mesh.mesh.surface_get_material(i) as StandardMaterial3D
+			if material:
+				mesh.set_surface_override_material(i, _shaded(material, shade))
+
+
+func _shaded(material: StandardMaterial3D, shade: int) -> StandardMaterial3D:
+	var key := [material, shade]
+	if not _shades.has(key):
+		var copy := material.duplicate() as StandardMaterial3D
+		copy.albedo_color = material.albedo_color.darkened(TILE_SHADE_RANGE * shade / (TILE_SHADES - 1))
+		_shades[key] = copy
+	return _shades[key]
 
 
 ## The directions (in cells) the path leaves this path cell in.

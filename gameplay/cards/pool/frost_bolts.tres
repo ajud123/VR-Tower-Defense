@@ -5,9 +5,10 @@
 [resource]
 script = ExtResource("1_card")
 title = "Frost Bolts"
-description = "Mage shots chill enemies, slowing them by 40% for 2 seconds."
+description = "Mage shots chill enemies, slowing them by 33% for 2 seconds."
+rarity = 1
 color = Color(0.45, 0.75, 0.95, 1)
 multipliers = Dictionary[String, float]({})
 bonuses = Dictionary[String, float]({
-"mage.slow": 0.4
+"mage.slow": 0.33
 })

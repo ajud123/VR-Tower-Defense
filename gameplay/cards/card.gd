@@ -6,19 +6,40 @@ extends Resource
 ## A card's effect is a set of stat modifiers, applied while it sits in one
 ## of the active slots. Keys are "<target>.<stat>", where target is either a
 ## group or a specific type:
-##   Towers  - "tower" (all), "archer", "cannon", "mage"
+##   Towers  - "tower" (all), "archer", "cannon", "mage", "catapult"
 ##             damage, fire_rate, range, splash_radius, cost,
-##             burn_dps (fire damage per second on hit), slow (0-1 on hit)
+##             burn_dps (fire damage per second on hit), slow (0-1 on hit),
+##             chain (extra enemies a hit jumps to), multishot (extra
+##             targets per volley), cluster (small blasts around a splash),
+##             pierce (1 = ignore armour), knockback (metres pushed back)
 ##   Enemies - "enemy" (all), "blob" (orc), "tank" (zombie), "ghost",
 ##             "skeleton", "vampire"
-##             health, speed, reward, damage_taken
+##             health, speed, reward, damage_taken,
+##             shatter (extra damage taken while slowed, 0.5 = +50%)
 ## Multipliers from every active card multiply together; bonuses add up.
 ## The card's face is drawn from these: an icon for the target, one for the
 ## stat, and the amount (see gameplay/icons/).
+##
+## Rarity decides how often the machine hands it out (RARITY_WEIGHTS) and
+## the colour of its frame.
+
+enum Rarity { COMMON, RARE, EPIC }
+
+## Relative odds of the machine rolling each rarity (it then picks a card of
+## that rarity). The machine lowers the common weight after commons in a row.
+const RARITY_WEIGHTS := {Rarity.COMMON: 6.0, Rarity.RARE: 3.0, Rarity.EPIC: 1.0}
+const RARITY_NAMES := {Rarity.COMMON: "Common", Rarity.RARE: "Rare", Rarity.EPIC: "Epic"}
+## Frame colours: cream, silver-blue, gold.
+const RARITY_COLORS := {
+	Rarity.COMMON: Color(0.95, 0.92, 0.82),
+	Rarity.RARE: Color(0.62, 0.78, 1.0),
+	Rarity.EPIC: Color(1.0, 0.78, 0.25),
+}
 
 @export var title: String = "Card"
 ## Printed on the back of the card.
 @export_multiline var description: String = ""
+@export var rarity: Rarity = Rarity.COMMON
 @export var color: Color = Color(0.4, 0.4, 0.45)
 ## e.g. {"mage.fire_rate": 2.0} makes mage towers fire twice as fast.
 @export var multipliers: Dictionary[String, float] = {}
@@ -55,4 +76,10 @@ func _bonus_text(stat: String, value: float) -> String:
 			return "+%s/s" % amount
 		"slow":
 			return "-%d%%" % roundi(value * 100.0)
+		"shatter":
+			return "+%d%%" % roundi(value * 100.0)
+		"pierce":
+			return "PIERCE"
+		"knockback":
+			return "PUSH"
 	return "+" + amount

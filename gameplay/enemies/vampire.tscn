@@ -24,10 +24,10 @@ rotation_mode = 0
 loop = false
 script = ExtResource("1_enemy")
 kind = "vampire"
-base_health = 120.0
+base_health = 100.0
 base_speed = 0.03
 base_reward = 50
-lives_cost = 5
+lives_cost = 3
 regen_per_second = 0.01
 
 [node name="Body" parent="." instance=ExtResource("2_model")]

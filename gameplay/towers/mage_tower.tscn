@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://gameplay/towers/tower.gd" id="1_tower"]
 [ext_resource type="PackedScene" path="res://assets/kenney/tower_defense/tower-round-bottom-c.glb" id="m0"]
-[ext_resource type="PackedScene" path="res://assets/kenney/tower_defense/tower-round-middle-b.glb" id="m1"]
+[ext_resource type="PackedScene" path="res://assets/kenney/tower_defense/tower-round-middle-a.glb" id="m1"]
 [ext_resource type="PackedScene" path="res://assets/kenney/tower_defense/tower-round-crystals.glb" id="m2"]
 
 [node name="MageTower" type="Node3D"]
@@ -10,9 +10,9 @@ script = ExtResource("1_tower")
 display_name = "Mage"
 kind = "mage"
 cost = 150
-attack_range = 0.28
-damage = 2.0
-fire_interval = 1.0
+attack_range = 0.32
+damage = 3.0
+fire_interval = 1.2
 bonus_damage_vs = Dictionary[String, float]({
 "tank": 1.5,
 "vampire": 1.5

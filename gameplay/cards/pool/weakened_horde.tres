@@ -6,6 +6,7 @@
 script = ExtResource("1_card")
 title = "Weakened Horde"
 description = "Enemies start with 75% health."
+rarity = 2
 color = Color(0.75, 0.2, 0.22, 1)
 multipliers = Dictionary[String, float]({
 "enemy.health": 0.75
