@@ -7,22 +7,22 @@
 [ext_resource type="PackedScene" path="res://interactables/push_button.tscn" id="5_button"]
 [ext_resource type="PackedScene" path="res://gameplay/park_tree.tscn" id="6_tree"]
 [ext_resource type="Script" uid="uid://rdw3csirdy0f" path="res://gameplay/game_state.gd" id="7_game"]
-[ext_resource type="PackedScene" path="res://gameplay/enemies/blob.tscn" id="8_blob"]
 [ext_resource type="Script" uid="uid://n7awxpd65mx6" path="res://gameplay/tower_placer.gd" id="9_placer"]
 [ext_resource type="PackedScene" path="res://gameplay/shop_item.tscn" id="10_shop_item"]
 [ext_resource type="PackedScene" path="res://gameplay/towers/archer_tower.tscn" id="11_archer"]
 [ext_resource type="PackedScene" path="res://gameplay/towers/cannon_tower.tscn" id="12_cannon"]
+[ext_resource type="PackedScene" path="res://gameplay/towers/catapult_tower.tscn" id="13_catapult"]
 [ext_resource type="PackedScene" path="res://gameplay/towers/mage_tower.tscn" id="13_mage"]
 [ext_resource type="Script" uid="uid://du0f7nrt5wtbm" path="res://gameplay/status_sign.gd" id="14_sign"]
-[ext_resource type="PackedScene" path="res://gameplay/enemies/tank.tscn" id="15_tank"]
 [ext_resource type="Script" uid="uid://bufvu1gbcjkjg" path="res://gameplay/cards/upgrades.gd" id="16_upgrades"]
 [ext_resource type="PackedScene" path="res://gameplay/cards/card_station.tscn" id="17_station"]
 [ext_resource type="PackedScene" path="res://gameplay/vending_machine/vending_machine.tscn" id="18_machine"]
 [ext_resource type="Script" uid="uid://r788y2t52x6x" path="res://gameplay/shop.gd" id="19_shop"]
-[ext_resource type="Texture2D" path="res://gameplay/icons/menu.svg" id="icon_menu"]
-[ext_resource type="Texture2D" path="res://gameplay/icons/restart.svg" id="icon_restart"]
-[ext_resource type="PackedScene" path="res://assets/kenney/graveyard/lightpost-single.glb" id="lamp_model"]
-[ext_resource type="Script" path="res://gameplay/lamp_post.gd" id="lamp_script"]
+[ext_resource type="PackedScene" path="res://gameplay/hammer/hammer.tscn" id="hammer"]
+[ext_resource type="Texture2D" uid="uid://06rsl18s3kjk" path="res://gameplay/icons/menu.svg" id="icon_menu"]
+[ext_resource type="Texture2D" uid="uid://dngonew4v4kt1" path="res://gameplay/icons/restart.svg" id="icon_restart"]
+[ext_resource type="PackedScene" uid="uid://d1qmmmdrbhdbc" path="res://assets/kenney/graveyard/lightpost-single.glb" id="lamp_model"]
+[ext_resource type="Script" uid="uid://63vlrqt6x8mj" path="res://gameplay/lamp_post.gd" id="lamp_script"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sky"]
 sky_top_color = Color(0.3, 0.52, 0.85, 1)
@@ -71,7 +71,7 @@ size = Vector3(2.5, 0.1, 0.32)
 size = Vector3(1.04, 0.047, 0.72)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ShopTray"]
-size = Vector3(0.28, 0.02, 0.56)
+size = Vector3(0.28, 0.02, 0.72)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_VendingMachine"]
 size = Vector3(0.82, 1.88, 0.57)
@@ -110,7 +110,7 @@ size = Vector3(0.06, 0.36, 0.06)
 
 [sub_resource type="BoxMesh" id="BoxMesh_tray"]
 material = SubResource("StandardMaterial3D_dark_wood")
-size = Vector3(0.28, 0.02, 0.56)
+size = Vector3(0.28, 0.02, 0.72)
 
 [sub_resource type="BoxMesh" id="BoxMesh_sign_post"]
 material = SubResource("StandardMaterial3D_dark_wood")
@@ -137,8 +137,6 @@ script = ExtResource("16_upgrades")
 script = ExtResource("4_spawner")
 board = NodePath("../PicnicTable/Board")
 game = NodePath("../Game")
-blob_scene = ExtResource("8_blob")
-tank_scene = ExtResource("15_tank")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=183838549]
 environment = SubResource("Environment_park")
@@ -191,7 +189,7 @@ transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, -13, 0, -9)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2, 0, -1.2)
 script = ExtResource("lamp_script")
 
-[node name="Model" parent="Park/LampPost" instance=ExtResource("lamp_model")]
+[node name="Model" parent="Park/LampPost" unique_id=1570019552 instance=ExtResource("lamp_model")]
 transform = Transform3D(1.4, 0, 0, 0, 1.4, 0, 0, 0, 1.4, 0, 0, 0)
 
 [node name="WorldCollision" type="StaticBody3D" parent="." unique_id=415013065]
@@ -345,18 +343,23 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.01, 0)
 mesh = SubResource("BoxMesh_tray")
 
 [node name="ArcherItem" parent="PicnicTable/Shop" unique_id=1802668162 node_paths=PackedStringArray("placer") instance=ExtResource("10_shop_item")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, -0.17)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, -0.24)
 tower_scene = ExtResource("11_archer")
 placer = NodePath("../../Board/TowerPlacer")
 
 [node name="CannonItem" parent="PicnicTable/Shop" unique_id=295916148 node_paths=PackedStringArray("placer") instance=ExtResource("10_shop_item")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, -0.08)
 tower_scene = ExtResource("12_cannon")
 placer = NodePath("../../Board/TowerPlacer")
 
 [node name="MageItem" parent="PicnicTable/Shop" unique_id=1144197 node_paths=PackedStringArray("placer") instance=ExtResource("10_shop_item")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 0.17)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 0.08)
 tower_scene = ExtResource("13_mage")
+placer = NodePath("../../Board/TowerPlacer")
+
+[node name="CatapultItem" parent="PicnicTable/Shop" unique_id=1976639176 node_paths=PackedStringArray("placer") instance=ExtResource("10_shop_item")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 0.24)
+tower_scene = ExtResource("13_catapult")
 placer = NodePath("../../Board/TowerPlacer")
 
 [node name="StatusSign" type="Node3D" parent="PicnicTable" unique_id=1913423488 node_paths=PackedStringArray("game")]
@@ -386,19 +389,24 @@ outline_size = 0
 [node name="MenuButton" parent="PicnicTable" unique_id=681652491 instance=ExtResource("5_button")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.12, 0.76, -0.36)
 text = "MENU"
-icon = ExtResource("icon_menu")
 color = Color(0.25, 0.45, 0.8, 1)
+icon = ExtResource("icon_menu")
 label_scale = 0.5
 
 [node name="RestartButton" parent="PicnicTable" unique_id=1262252664 instance=ExtResource("5_button")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.85, 0.76, -0.38)
 text = "RESTART"
-icon = ExtResource("icon_restart")
 color = Color(0.3, 0.7, 0.3, 1)
+icon = ExtResource("icon_restart")
 label_scale = 0.5
 
 [node name="CardStation" parent="PicnicTable" unique_id=1130480111 node_paths=PackedStringArray("game") instance=ExtResource("17_station")]
 transform = Transform3D(0.9063078, 0, 0.42261827, 0, 1, 0, -0.42261827, 0, 0.9063078, -0.74, 0.76, 0.14)
+game = NodePath("../../Game")
+
+[node name="Hammer" parent="PicnicTable" unique_id=555673509 node_paths=PackedStringArray("board", "game") instance=ExtResource("hammer")]
+transform = Transform3D(0, -1, 0, -1, 0, 0, 0, 0, -1, 0.5, 0.78, 0.41)
+board = NodePath("../Board")
 game = NodePath("../../Game")
 
 [node name="VendingMachine" parent="." unique_id=2093155452 node_paths=PackedStringArray("game", "station") instance=ExtResource("18_machine")]

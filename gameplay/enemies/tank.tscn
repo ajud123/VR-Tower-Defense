@@ -24,9 +24,9 @@ rotation_mode = 0
 loop = false
 script = ExtResource("1_enemy")
 kind = "tank"
-base_health = 30.0
+base_health = 40.0
 base_speed = 0.034
-base_reward = 15
+base_reward = 12
 
 [node name="Body" parent="." instance=ExtResource("2_model")]
 transform = Transform3D(0.08, 0, 0, 0, 0.08, 0, 0, 0, 0.08, 0, 0, 0)

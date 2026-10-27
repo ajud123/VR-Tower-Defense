@@ -15,6 +15,9 @@ const CARRY_OFFSET := Vector3(0, -0.07, 0)
 const NO_CELL := Vector2i(-1, -1)
 const BUILDABLE_COLOR := Color(0.3, 1.0, 0.4, 0.55)
 const BLOCKED_COLOR := Color(1.0, 0.25, 0.2, 0.55)
+## Each tower of the same kind already on the board makes the next one cost
+## this much more (0.25 = +25%), so mixing tower types pays off.
+const SAME_KIND_PRICE_GROWTH := 0.25
 
 @export var board: Board
 @export var game: GameState
@@ -143,15 +146,23 @@ func _end_carry() -> void:
 	_set_ghost(null)
 
 
+## What building `tower`'s kind costs right now: its price (cards included),
+## plus extra for each of that kind already built.
+func price_of(tower: Tower) -> int:
+	return roundi(tower.get_cost() * (1.0 + SAME_KIND_PRICE_GROWTH * board.count_towers(tower.kind)))
+
+
 func _can_build(cell: Vector2i) -> bool:
-	return not game.is_over and board.is_buildable(cell) and game.can_afford(_ghost.get_cost())
+	return not game.is_over and board.is_buildable(cell) and game.can_afford(price_of(_ghost))
 
 
 func _try_build(tower_scene: PackedScene, cell: Vector2i) -> bool:
-	if not _can_build(cell) or not game.spend(_ghost.get_cost()):
+	var price := price_of(_ghost)
+	if not _can_build(cell) or not game.spend(price):
 		return false
 	var tower: Tower = tower_scene.instantiate()
 	tower.upgrades = game.upgrades
+	tower.paid = price
 	board.place_tower(cell, tower)
 	return true
 

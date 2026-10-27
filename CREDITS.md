@@ -30,6 +30,8 @@ They were recoloured (background removed, glyph white) for in-game tinting.
 | slow.svg | snowflake-1 | Lorc |
 | damage_taken.svg | cracked-shield | Lorc |
 | health.svg | hearts | Skoll |
+| skeleton.svg | skeleton | Skoll |
+| vampire.svg | vampire-dracula | Delapouite |
 
 `play.svg` was made for this project.
 

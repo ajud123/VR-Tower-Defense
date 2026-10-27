@@ -9,7 +9,8 @@ extends Resource
 ##   Towers  - "tower" (all), "archer", "cannon", "mage"
 ##             damage, fire_rate, range, splash_radius, cost,
 ##             burn_dps (fire damage per second on hit), slow (0-1 on hit)
-##   Enemies - "enemy" (all), "blob", "tank"
+##   Enemies - "enemy" (all), "blob" (orc), "tank" (zombie), "ghost",
+##             "skeleton", "vampire"
 ##             health, speed, reward, damage_taken
 ## Multipliers from every active card multiply together; bonuses add up.
 ## The card's face is drawn from these: an icon for the target, one for the

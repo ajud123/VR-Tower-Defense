@@ -9,12 +9,13 @@
 script = ExtResource("1_tower")
 display_name = "Mage"
 kind = "mage"
-cost = 140
-attack_range = 0.32
-damage = 3.0
-fire_interval = 0.7
+cost = 150
+attack_range = 0.28
+damage = 2.0
+fire_interval = 1.0
 bonus_damage_vs = Dictionary[String, float]({
-"tank": 1.5
+"tank": 1.5,
+"vampire": 1.5
 })
 projectile_speed = 1.2
 projectile_color = Color(0.4, 0.9, 1, 1)

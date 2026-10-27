@@ -4,17 +4,21 @@
 [ext_resource type="PackedScene" path="res://assets/kenney/tower_defense/tower-round-bottom-a.glb" id="m0"]
 [ext_resource type="PackedScene" path="res://assets/kenney/tower_defense/tower-round-top-a.glb" id="m1"]
 [ext_resource type="PackedScene" path="res://assets/kenney/tower_defense/weapon-ballista.glb" id="m2"]
+[ext_resource type="PackedScene" path="res://assets/kenney/tower_defense/weapon-ammo-arrow.glb" id="ammo"]
 
 [node name="ArcherTower" type="Node3D" node_paths=PackedStringArray("turret")]
 script = ExtResource("1_tower")
 display_name = "Archer"
 kind = "archer"
-cost = 60
+cost = 75
 attack_range = 0.24
-damage = 1.5
-fire_interval = 0.6
+damage = 1.0
+fire_interval = 0.75
 projectile_speed = 1.0
 projectile_color = Color(1, 0.9, 0.5, 1)
+projectile_model = ExtResource("ammo")
+projectile_model_scale = 0.045
+projectile_arc = 0.015
 muzzle_height = 0.085
 turret = NodePath("Model/Turret")
 

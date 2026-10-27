@@ -19,6 +19,11 @@ extends Node3D
 @export var bonus_damage_vs: Dictionary[String, float] = {}
 @export var projectile_speed: float = 0.8
 @export var projectile_color: Color = Color.WHITE
+## What the shot looks like (e.g. an arrow). None means a glowing orb.
+@export var projectile_model: PackedScene
+@export var projectile_model_scale: float = 0.02
+## How high shots arc above a straight line, in metres. 0 flies straight.
+@export var projectile_arc: float = 0.0
 ## Height shots leave from, relative to the tower's base.
 @export var muzzle_height: float = 0.1
 ## Optional weapon model that turns to face what the tower shoots at.
@@ -27,6 +32,8 @@ extends Node3D
 
 ## Set by whoever builds the tower. Null means no cards apply.
 var upgrades: Upgrades
+## Gold paid for it, for working out what selling it gives back.
+var paid: int = 0
 ## Previews (shop display, placement ghosts) never shoot.
 var preview: bool = false
 var _cooldown: float = 0.0
@@ -127,8 +134,9 @@ func _aim_at(target: Enemy) -> void:
 func _fire(target: Enemy) -> void:
 	var projectile := Projectile.new()
 	projectile.setup(target, self)
+	# Placed before it enters the tree, so it knows where it started from.
+	projectile.position = position + Vector3.UP * muzzle_height
 	get_parent().add_child(projectile)
-	projectile.global_position = global_position + Vector3.UP * muzzle_height
 
 
 func _number(value: float) -> String:

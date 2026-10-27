@@ -72,7 +72,8 @@ WASD: move | Q/E: down/up | Shift: faster
 Mouse: look | Left click: press what the crosshair is on
 Build: click a shop tower, then a free tile | Right click: cancel
 Cards: click to pick up, click a slot / storage / anywhere to put down | Right click: drop
-Esc: release cursor | Left click: capture"
+Hammer: click it, then click a tower to sell it (70% back) | Right click: put it back
+Esc: release cursor | Left click: capture | F1: hide this help"
 
 [node name="Crosshair" type="Label" parent="DesktopPlayer/HUD" unique_id=2124236005]
 anchors_preset = 8

@@ -1,12 +1,13 @@
 class_name Enemy
 extends PathFollow3D
 ## Something that walks along the board's enemy path. Each enemy type is its
-## own scene using this script (blob.tscn, tank.tscn). The WaveSpawner calls
+## own scene using this script (blob.tscn, tank.tscn, ghost.tscn, ...). The
+## WaveSpawner calls
 ## setup() and adds it as a child of the board's Path3D.
 ##
 ## The scene's Body is an animated Kenney character (with "walk" and "die"
 ## animations). It turns to face where it's going, and is tinted while
-## burning or slowed.
+## burning (with flames) or slowed. It leaves a puff of smoke when it dies.
 
 signal reached_end
 signal died(reward: int)
@@ -19,6 +20,7 @@ const TINT_STRENGTH := 0.45
 const WALK_ANIMATION_SPEED := 0.05
 ## Kenney characters face +Z; turn them to face along the path.
 const TURN_SPEED := 10.0
+const DEATH_SMOKE := Color(0.85, 0.85, 0.85, 0.8)
 
 ## Used by cards to target this enemy type, e.g. "tank.damage_taken".
 @export var kind: String = "blob"
@@ -27,6 +29,15 @@ const TURN_SPEED := 10.0
 @export var base_speed: float = 0.055
 ## Gold paid out when killed.
 @export var base_reward: int = 6
+## Lives lost when it reaches the castle.
+@export var lives_cost: int = 1
+## Damage multipliers against particular tower kinds, e.g. {"archer": 0.5}
+## takes half damage from archers.
+@export var resistances: Dictionary[String, float] = {}
+## Heals this fraction of its max health per second.
+@export var regen_per_second: float = 0.0
+## See-through amount of the body, e.g. for ghosts.
+@export_range(0.0, 1.0) var body_transparency: float = 0.0
 
 var max_health: float
 var health: float
@@ -41,6 +52,7 @@ var _burn_time: float = 0.0
 var _slow: float = 0.0
 var _slow_time: float = 0.0
 var _tint := StandardMaterial3D.new()
+var _flames: CPUParticles3D
 var _last_position: Vector3
 
 @onready var _body: Node3D = $Body
@@ -69,8 +81,16 @@ func _ready() -> void:
 	_tint.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	for mesh: MeshInstance3D in _body.find_children("*", "MeshInstance3D", true, false):
 		mesh.material_overlay = _tint
+		mesh.transparency = body_transparency
 	if _animation:
 		_animation.play("walk")
+	_flames = Effects.trail(BURN_TINT, 0.006, 0.4)
+	_flames.gravity = Vector3(0, 0.12, 0)
+	_flames.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
+	_flames.emission_sphere_radius = 0.01
+	_flames.position.y = 0.02
+	_flames.emitting = false
+	add_child(_flames)
 	_last_position = global_position
 
 
@@ -89,6 +109,9 @@ func _process(delta: float) -> void:
 	if _burn_time > 0.0:
 		_burn_time -= delta
 		take_damage(_burn_dps * delta)
+	if regen_per_second > 0.0 and not _dead and health < max_health:
+		health = minf(health + max_health * regen_per_second * delta, max_health)
+		_update_health_bar()
 	_face_movement(delta)
 	if _animation:
 		_animation.speed_scale = current_speed / WALK_ANIMATION_SPEED
@@ -99,13 +122,13 @@ func is_dead() -> bool:
 	return _dead
 
 
-func take_damage(amount: float) -> void:
+## `source` is the kind of tower that dealt it ("archer", ...), for
+## resistances; burns and other effects pass "".
+func take_damage(amount: float, source: String = "") -> void:
 	if _dead:
 		return
-	health -= amount * damage_taken
-	var ratio := clampf(health / max_health, 0.0, 1.0)
-	_health_fill.scale.x = _fill_width * ratio
-	_health_fill.position.x = -_fill_width * (1.0 - ratio) * 0.5
+	health -= amount * damage_taken * resistances.get(source, 1.0)
+	_update_health_bar()
 	if health <= 0.0:
 		_dead = true
 		died.emit(reward)
@@ -124,6 +147,12 @@ func chill(fraction: float, duration: float) -> void:
 	_slow_time = maxf(_slow_time, duration)
 
 
+func _update_health_bar() -> void:
+	var ratio := clampf(health / max_health, 0.0, 1.0)
+	_health_fill.scale.x = _fill_width * ratio
+	_health_fill.position.x = -_fill_width * (1.0 - ratio) * 0.5
+
+
 ## Falls over, then goes away. Towers already ignore it (is_dead()).
 func _die() -> void:
 	remove_from_group("enemies")
@@ -134,7 +163,13 @@ func _die() -> void:
 		_animation.speed_scale = 1.0
 		_animation.play("die")
 		linger = minf(_animation.current_animation_length, 1.0)
-	get_tree().create_timer(linger + 0.3).timeout.connect(queue_free)
+	_flames.emitting = false
+	get_tree().create_timer(linger + 0.3).timeout.connect(_vanish)
+
+
+func _vanish() -> void:
+	Effects.burst(get_parent(), global_position + Vector3.UP * 0.015, DEATH_SMOKE, 14, 0.012, 0.06, 0.6)
+	queue_free()
 
 
 func _face_movement(delta: float) -> void:
@@ -148,6 +183,7 @@ func _face_movement(delta: float) -> void:
 
 
 func _update_tint() -> void:
+	_flames.emitting = _burn_time > 0.0
 	var color := Color(0, 0, 0, 0)
 	if _burn_time > 0.0:
 		color = Color(BURN_TINT, TINT_STRENGTH)

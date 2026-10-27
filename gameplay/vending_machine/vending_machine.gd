@@ -3,16 +3,17 @@ extends Node3D
 ## card you don't own yet; it pops out of the slot and lands on the ground
 ## for the player to pick up. Every pull costs more than the last. Cards are
 ## a mid-game buy: the machine stays shut until wave `opens_at_wave` starts.
+## Every card costs `price_step` more than the one before.
 
 const MESSAGE_TIME_MSEC := 2500
 
 @export var game: GameState
 @export var station: CardStation
 ## The machine stays locked before this wave.
-@export var opens_at_wave: int = 3
-@export var price: int = 250
+@export var opens_at_wave: int = 2
+@export var price: int = 100
 ## How much the price goes up after each card.
-@export var price_step: int = 75
+@export var price_step: int = 150
 
 @onready var _screen: Label3D = $Screen/Text
 @onready var _output: Node3D = $Output

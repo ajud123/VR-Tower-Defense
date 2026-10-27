@@ -1,0 +1,46 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://cmb82krqxtwpy" path="res://gameplay/enemies/enemy.gd" id="1_enemy"]
+[ext_resource type="PackedScene" path="res://assets/kenney/graveyard/character-vampire.glb" id="2_model"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bar_back"]
+shading_mode = 0
+albedo_color = Color(0.1, 0.1, 0.1, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_bar_back"]
+material = SubResource("StandardMaterial3D_bar_back")
+size = Vector3(0.05, 0.006, 0.004)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bar_fill"]
+shading_mode = 0
+albedo_color = Color(0.3, 0.95, 0.35, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_bar_fill"]
+material = SubResource("StandardMaterial3D_bar_fill")
+size = Vector3(1, 0.006, 0.005)
+
+[node name="Vampire" type="PathFollow3D"]
+rotation_mode = 0
+loop = false
+script = ExtResource("1_enemy")
+kind = "vampire"
+base_health = 120.0
+base_speed = 0.03
+base_reward = 50
+lives_cost = 5
+regen_per_second = 0.01
+
+[node name="Body" parent="." instance=ExtResource("2_model")]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0)
+
+[node name="HealthBar" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.095, 0)
+
+[node name="Back" type="MeshInstance3D" parent="HealthBar"]
+cast_shadow = 0
+mesh = SubResource("BoxMesh_bar_back")
+
+[node name="Fill" type="MeshInstance3D" parent="HealthBar"]
+transform = Transform3D(0.048, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_bar_fill")

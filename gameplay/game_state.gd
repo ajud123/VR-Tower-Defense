@@ -15,6 +15,8 @@ var gold: int
 ## The wave currently running or last finished; 0 before the first one.
 var wave: int = 0
 var total_waves: int = 0
+## Name of the wave running, or of the next one during the countdown.
+var wave_name: String = ""
 ## Seconds until the next wave starts, or a negative number while a wave runs.
 var next_wave_in: float = -1.0
 ## Gold paid for clearing the last wave, or 0 before any wave is cleared.

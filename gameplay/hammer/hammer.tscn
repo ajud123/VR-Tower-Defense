@@ -1,0 +1,73 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://gameplay/hammer/hammer.gd" id="1_hammer"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_hammer"]
+size = Vector3(0.05, 0.22, 0.1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_handle"]
+albedo_color = Color(0.72, 0.45, 0.25, 1)
+roughness = 0.8
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_handle"]
+material = SubResource("StandardMaterial3D_handle")
+top_radius = 0.009
+bottom_radius = 0.011
+height = 0.17
+radial_segments = 10
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_grip"]
+albedo_color = Color(0.75, 0.2, 0.18, 1)
+roughness = 0.9
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_grip"]
+material = SubResource("StandardMaterial3D_grip")
+top_radius = 0.013
+bottom_radius = 0.013
+height = 0.06
+radial_segments = 10
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_head"]
+albedo_color = Color(0.45, 0.47, 0.55, 1)
+metallic = 0.6
+roughness = 0.4
+
+[sub_resource type="BoxMesh" id="BoxMesh_head"]
+material = SubResource("StandardMaterial3D_head")
+size = Vector3(0.04, 0.04, 0.085)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_face"]
+material = SubResource("StandardMaterial3D_head")
+top_radius = 0.024
+bottom_radius = 0.024
+height = 0.012
+radial_segments = 12
+
+[node name="Hammer" type="StaticBody3D"]
+collision_layer = 10
+collision_mask = 0
+script = ExtResource("1_hammer")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+shape = SubResource("BoxShape3D_hammer")
+
+[node name="Handle" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.085, 0)
+mesh = SubResource("CylinderMesh_handle")
+
+[node name="Grip" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, 0)
+mesh = SubResource("CylinderMesh_grip")
+
+[node name="Head" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.18, 0)
+mesh = SubResource("BoxMesh_head")
+
+[node name="FaceFront" type="MeshInstance3D" parent="Head"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0.045)
+mesh = SubResource("CylinderMesh_face")
+
+[node name="FaceBack" type="MeshInstance3D" parent="Head"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, -0.045)
+mesh = SubResource("CylinderMesh_face")

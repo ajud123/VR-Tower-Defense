@@ -36,8 +36,8 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
-	# Cards can change the price, so keep the tag current.
-	var cost := _display.get_cost()
+	# Cards and towers already built change the price, so keep the tag current.
+	var cost := placer.price_of(_display)
 	_price_label.text = str(cost)
 	_price_label.modulate = PRICE_COLOR if placer.game.can_afford(cost) else TOO_EXPENSIVE_COLOR
 	var picked := is_picked()

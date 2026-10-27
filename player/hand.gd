@@ -79,7 +79,7 @@ func _grab() -> void:
 		_set_touching(null)
 		_held = target.grab(self)
 		if _held:
-			_pulse(0.4, 0.08)
+			pulse(0.4, 0.08)
 
 
 func _release() -> void:
@@ -97,10 +97,11 @@ func _set_touching(body: Node3D) -> void:
 	if _touching:
 		if _touching.has_method("hover_enter"):
 			_touching.hover_enter()
-		_pulse(0.15, 0.03)
+		pulse(0.15, 0.03)
 
 
-func _pulse(amplitude: float, duration: float) -> void:
+## Buzzes the controller, e.g. when a held tool hits something.
+func pulse(amplitude: float, duration: float) -> void:
 	if _controller:
 		_controller.trigger_haptic_pulse(&"haptic", 0.0, amplitude, duration, 0.0)
 

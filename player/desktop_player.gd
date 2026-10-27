@@ -9,6 +9,7 @@ extends Node3D
 @onready var interaction_ray: InteractionRay = $Camera3D/InteractionRay
 @onready var hud: CanvasLayer = $HUD
 @onready var crosshair: Label = $HUD/Crosshair
+@onready var help: Label = $HUD/Help
 ## Things picked up (cards) are shown here, bottom right of the view.
 @onready var hold_point: Node3D = $Camera3D/HoldPoint
 
@@ -35,6 +36,8 @@ func activate() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	elif event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F1:
+		help.visible = not help.visible
 	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 			_click()
@@ -55,6 +58,11 @@ func _unhandled_input(event: InputEvent) -> void:
 func _click() -> void:
 	var target := interaction_ray.target
 	if is_instance_valid(held):
+		# Tools (the hammer) are used where you click and stay in hand.
+		if held.has_method("use_along"):
+			var reach := interaction_ray.target_position.length()
+			held.use_along(camera.global_position, camera.global_position - camera.global_basis.z * reach)
+			return
 		if not (target and target.has_method("accept_card") and target.accept_card(held)):
 			held.drop(_drop_point())
 		held = null

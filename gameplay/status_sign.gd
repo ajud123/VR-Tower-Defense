@@ -33,13 +33,13 @@ func _process(_delta: float) -> void:
 		_text.modulate = WIN_COLOR if game.won else LOSE_COLOR
 		_text.font_size = 56
 	elif game.next_wave_in >= 0.0 and game.last_wave_bonus > 0:
-		_text.text = "Wave cleared: +%d gold      Next wave in %d" % [
-			game.last_wave_bonus, ceili(game.next_wave_in)
+		_text.text = "Wave cleared: +%d gold      Next: %s in %d" % [
+			game.last_wave_bonus, game.wave_name, ceili(game.next_wave_in)
 		]
 	elif game.next_wave_in >= 0.0:
-		_text.text = "Next wave in %d" % ceili(game.next_wave_in)
+		_text.text = "Next: %s in %d" % [game.wave_name, ceili(game.next_wave_in)]
 	else:
-		_text.text = "Wave in progress"
+		_text.text = game.wave_name
 
 
 ## An icon with a number to its right, on the top row of the sign.

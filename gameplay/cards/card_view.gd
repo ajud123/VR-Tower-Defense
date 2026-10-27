@@ -17,6 +17,9 @@ const PICKABLE_LAYERS := 10
 const WORLD_LAYER := 1
 ## Where the card sits relative to a VR hand holding it.
 const HAND_OFFSET := Transform3D(Basis(), Vector3(0, -0.05, -0.02))
+## The face is the card's colour darkened by this much, so the white icons
+## and text on it stay readable even on yellow cards.
+const FACE_DARKEN := 0.45
 ## Just above the face, where the art is drawn. Stat icons sit on a badge
 ## over the target icon; the layers are spread out so they don't z-fight.
 const ART_Z := 0.0026
@@ -40,7 +43,7 @@ func _ready() -> void:
 	collision_mask = WORLD_LAYER
 	continuous_cd = true
 	freeze_mode = RigidBody3D.FREEZE_MODE_KINEMATIC
-	_face_material.albedo_color = card.color
+	_face_material.albedo_color = card.color.darkened(FACE_DARKEN)
 	_face_material.emission = card.color
 	$Face.material_override = _face_material
 	$Title.text = card.title

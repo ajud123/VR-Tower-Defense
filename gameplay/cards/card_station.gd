@@ -116,6 +116,6 @@ func _update_info() -> void:
 	var first_wave_done := game.wave > 1 or (game.wave == 1 and game.next_wave_in >= 0.0)
 	_info.visible = not first_wave_done
 	if _info.visible:
-		_info.text = "CARDS  %d/%d active\nPick up cards and put them in the gold slots\nCards come from the machine behind you (opens at wave 3)" % [
+		_info.text = "CARDS  %d/%d active\nPick up cards and put them in the gold slots\nCards come from the machine behind you (opens at wave 2)" % [
 			game.upgrades.active_count(), Upgrades.SLOT_COUNT
 		]

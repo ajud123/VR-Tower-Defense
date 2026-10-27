@@ -125,6 +125,16 @@ func place_tower(cell: Vector2i, tower: Node3D) -> void:
 	tower.tree_exited.connect(func() -> void: _towers.erase(cell))
 
 
+## The tower standing on a cell, or null.
+func tower_at(cell: Vector2i) -> Node3D:
+	return _towers.get(cell)
+
+
+## How many towers of a kind ("archer", ...) are on the board.
+func count_towers(kind: String) -> int:
+	return _towers.values().filter(func(tower: Node3D) -> bool: return tower.get("kind") == kind).size()
+
+
 ## Every path cell in walking order, spawn first.
 func get_path_cells() -> Array[Vector2i]:
 	return _path_cells.duplicate()

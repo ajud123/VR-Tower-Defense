@@ -6,10 +6,12 @@ extends Node3D
 const BOARD_POSITION := Vector3(0.125, 0.0, 0.0)
 ## Turned to face the player on the bench.
 const BOARD_YAW_DEGREES := -70.0
-const PANEL_SIZE := Vector2(0.32, 0.17)
+const PANEL_SIZE := Vector2(0.36, 0.17)
 const PANEL_HEIGHT := 0.27
-const ROWS_PER_COLUMN := 4
-const MAX_ROWS := 8
+## Stats fill the board left to right, three per line.
+const COLUMNS := 3
+const MAX_ROWS := 9
+const ICON_SIZE := 0.026
 const INK := Color(0.95, 0.93, 0.85)
 
 var _header: Label3D
@@ -85,14 +87,13 @@ func _build_board() -> void:
 	_header = _label("SHOP", 64, Vector3(0, 0.058, 0))
 	face.add_child(_header)
 	for i in MAX_ROWS:
-		var column := i / ROWS_PER_COLUMN
-		var at := Vector3(-0.12 + column * 0.15, 0.022 - (i % ROWS_PER_COLUMN) * 0.032, 0)
-		var icon := Icons.sprite("damage", 0.03)
+		var at := Vector3(-0.15 + (i % COLUMNS) * 0.115, 0.018 - (i / COLUMNS) * 0.04, 0)
+		var icon := Icons.sprite("damage", ICON_SIZE)
 		icon.position = at
 		icon.visible = false
 		face.add_child(icon)
 		_row_icons.append(icon)
-		var label := _label("", 44, at + Vector3(0.026, 0, 0))
+		var label := _label("", 36, at + Vector3(ICON_SIZE * 0.85, 0, 0))
 		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 		label.visible = false
 		face.add_child(label)

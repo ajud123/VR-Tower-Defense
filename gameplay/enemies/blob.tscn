@@ -24,9 +24,9 @@ rotation_mode = 0
 loop = false
 script = ExtResource("1_enemy")
 kind = "blob"
-base_health = 5.0
+base_health = 7.0
 base_speed = 0.055
-base_reward = 5
+base_reward = 4
 
 [node name="Body" parent="." instance=ExtResource("2_model")]
 transform = Transform3D(0.06, 0, 0, 0, 0.06, 0, 0, 0, 0.06, 0, 0, 0)
