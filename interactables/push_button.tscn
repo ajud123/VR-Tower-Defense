@@ -47,6 +47,13 @@ mesh = SubResource("CylinderMesh_base")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.055, 0)
 mesh = SubResource("CylinderMesh_cap")
 
+[node name="Icon" type="Sprite3D" parent="Cap"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0.0155, 0)
+visible = false
+cast_shadow = 0
+alpha_cut = 2
+texture_filter = 5
+
 [node name="PokeZone" type="Area3D" parent="."]
 collision_layer = 0
 collision_mask = 4

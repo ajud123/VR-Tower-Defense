@@ -110,7 +110,8 @@ func _layout() -> void:
 		_stored[i].settle(CardView.State.STORED, _storage.global_transform * Transform3D(Basis(), offset))
 
 
-## The how-to label only shows until the first wave is cleared.
+## The how-to printed on the empty mat only shows until the first wave is
+## cleared.
 func _update_info() -> void:
 	var first_wave_done := game.wave > 1 or (game.wave == 1 and game.next_wave_in >= 0.0)
 	_info.visible = not first_wave_done

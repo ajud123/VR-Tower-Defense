@@ -1,14 +1,24 @@
 class_name Enemy
 extends PathFollow3D
-## Something that hops along the board's enemy path. Each enemy type is its
+## Something that walks along the board's enemy path. Each enemy type is its
 ## own scene using this script (blob.tscn, tank.tscn). The WaveSpawner calls
 ## setup() and adds it as a child of the board's Path3D.
+##
+## The scene's Body is an animated Kenney character (with "walk" and "die"
+## animations). It turns to face where it's going, and is tinted while
+## burning or slowed.
 
 signal reached_end
 signal died(reward: int)
 
 const BURN_TINT := Color(1.0, 0.45, 0.1)
 const SLOW_TINT := Color(0.55, 0.85, 1.0)
+## How strongly a burn or slow tints the body.
+const TINT_STRENGTH := 0.45
+## The walk animation plays at normal speed at this many metres per second.
+const WALK_ANIMATION_SPEED := 0.05
+## Kenney characters face +Z; turn them to face along the path.
+const TURN_SPEED := 10.0
 
 ## Used by cards to target this enemy type, e.g. "tank.damage_taken".
 @export var kind: String = "blob"
@@ -17,7 +27,6 @@ const SLOW_TINT := Color(0.55, 0.85, 1.0)
 @export var base_speed: float = 0.055
 ## Gold paid out when killed.
 @export var base_reward: int = 6
-@export var hop_height: float = 0.012
 
 var max_health: float
 var health: float
@@ -27,17 +36,17 @@ var reward: int
 var damage_taken: float = 1.0
 
 var _dead := false
-var _time := randf() * TAU
 var _burn_dps: float = 0.0
 var _burn_time: float = 0.0
 var _slow: float = 0.0
 var _slow_time: float = 0.0
-var _body_material: StandardMaterial3D
-var _body_color: Color
+var _tint := StandardMaterial3D.new()
+var _last_position: Vector3
 
-@onready var _body: MeshInstance3D = $Body
+@onready var _body: Node3D = $Body
+@onready var _animation: AnimationPlayer = _body.find_child("AnimationPlayer", true, false)
+@onready var _health_bar: Node3D = $HealthBar
 @onready var _health_fill: Node3D = $HealthBar/Fill
-@onready var _body_rest_y: float = _body.position.y
 @onready var _fill_width: float = _health_fill.scale.x
 
 
@@ -56,14 +65,21 @@ func _ready() -> void:
 		setup(1.0, 1.0, null)
 	health = max_health
 	add_to_group("enemies")
-	_body_material = (_body.mesh.surface_get_material(0) as StandardMaterial3D).duplicate()
-	_body_color = _body_material.albedo_color
-	_body.material_override = _body_material
+	_tint.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	_tint.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	for mesh: MeshInstance3D in _body.find_children("*", "MeshInstance3D", true, false):
+		mesh.material_overlay = _tint
+	if _animation:
+		_animation.play("walk")
+	_last_position = global_position
 
 
 func _process(delta: float) -> void:
+	if _dead:
+		return
 	var slowed := _slow_time > 0.0
-	progress += speed * (1.0 - _slow if slowed else 1.0) * delta
+	var current_speed := speed * (1.0 - _slow if slowed else 1.0)
+	progress += current_speed * delta
 	if progress_ratio >= 1.0:
 		_dead = true
 		reached_end.emit()
@@ -73,8 +89,9 @@ func _process(delta: float) -> void:
 	if _burn_time > 0.0:
 		_burn_time -= delta
 		take_damage(_burn_dps * delta)
-	_time += delta
-	_body.position.y = _body_rest_y + absf(sin(_time * 9.0)) * hop_height
+	_face_movement(delta)
+	if _animation:
+		_animation.speed_scale = current_speed / WALK_ANIMATION_SPEED
 	_update_tint()
 
 
@@ -92,7 +109,7 @@ func take_damage(amount: float) -> void:
 	if health <= 0.0:
 		_dead = true
 		died.emit(reward)
-		queue_free()
+		_die()
 
 
 ## Sets the enemy on fire. A stronger burn replaces a weaker one.
@@ -107,10 +124,33 @@ func chill(fraction: float, duration: float) -> void:
 	_slow_time = maxf(_slow_time, duration)
 
 
+## Falls over, then goes away. Towers already ignore it (is_dead()).
+func _die() -> void:
+	remove_from_group("enemies")
+	_health_bar.hide()
+	_tint.albedo_color.a = 0.0
+	var linger := 0.0
+	if _animation and _animation.has_animation("die"):
+		_animation.speed_scale = 1.0
+		_animation.play("die")
+		linger = minf(_animation.current_animation_length, 1.0)
+	get_tree().create_timer(linger + 0.3).timeout.connect(queue_free)
+
+
+func _face_movement(delta: float) -> void:
+	var step := global_position - _last_position
+	_last_position = global_position
+	step.y = 0.0
+	if step.length_squared() < 1e-10:
+		return
+	var target := atan2(step.x, step.z)
+	_body.rotation.y = lerp_angle(_body.rotation.y, target, minf(TURN_SPEED * delta, 1.0))
+
+
 func _update_tint() -> void:
-	var color := _body_color
+	var color := Color(0, 0, 0, 0)
 	if _burn_time > 0.0:
-		color = color.lerp(BURN_TINT, 0.6)
+		color = Color(BURN_TINT, TINT_STRENGTH)
 	elif _slow_time > 0.0:
-		color = color.lerp(SLOW_TINT, 0.6)
-	_body_material.albedo_color = color
+		color = Color(SLOW_TINT, TINT_STRENGTH)
+	_tint.albedo_color = color

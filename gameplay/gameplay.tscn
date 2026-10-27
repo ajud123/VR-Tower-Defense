@@ -19,6 +19,10 @@
 [ext_resource type="PackedScene" path="res://gameplay/cards/card_station.tscn" id="17_station"]
 [ext_resource type="PackedScene" path="res://gameplay/vending_machine/vending_machine.tscn" id="18_machine"]
 [ext_resource type="Script" uid="uid://r788y2t52x6x" path="res://gameplay/shop.gd" id="19_shop"]
+[ext_resource type="Texture2D" path="res://gameplay/icons/menu.svg" id="icon_menu"]
+[ext_resource type="Texture2D" path="res://gameplay/icons/restart.svg" id="icon_restart"]
+[ext_resource type="PackedScene" path="res://assets/kenney/graveyard/lightpost-single.glb" id="lamp_model"]
+[ext_resource type="Script" path="res://gameplay/lamp_post.gd" id="lamp_script"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sky"]
 sky_top_color = Color(0.3, 0.52, 0.85, 1)
@@ -35,7 +39,7 @@ sky = SubResource("Sky_park")
 tonemap_mode = 2
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_grass"]
-albedo_color = Color(0.3, 0.5, 0.22, 1)
+albedo_color = Color(0.3, 0.5, 0.25, 1)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
 material = SubResource("StandardMaterial3D_grass")
@@ -47,28 +51,6 @@ albedo_color = Color(0.7, 0.64, 0.54, 1)
 [sub_resource type="BoxMesh" id="BoxMesh_walkway"]
 material = SubResource("StandardMaterial3D_gravel")
 size = Vector3(40, 0.02, 2)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lamp_pole"]
-albedo_color = Color(0.1, 0.12, 0.12, 1)
-metallic = 0.7
-roughness = 0.4
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_lamp_pole"]
-material = SubResource("StandardMaterial3D_lamp_pole")
-top_radius = 0.04
-bottom_radius = 0.06
-height = 3.0
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lamp_glow"]
-albedo_color = Color(1, 0.92, 0.7, 1)
-emission_enabled = true
-emission = Color(1, 0.85, 0.55, 1)
-emission_energy_multiplier = 2.0
-
-[sub_resource type="SphereMesh" id="SphereMesh_lamp"]
-material = SubResource("StandardMaterial3D_lamp_glow")
-radius = 0.15
-height = 0.3
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_Ground"]
 size = Vector3(80, 1, 80)
@@ -207,15 +189,10 @@ transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, -13, 0, -9)
 
 [node name="LampPost" type="Node3D" parent="Park" unique_id=749292516]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2, 0, -1.2)
+script = ExtResource("lamp_script")
 
-[node name="Pole" type="MeshInstance3D" parent="Park/LampPost" unique_id=861918570]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
-mesh = SubResource("CylinderMesh_lamp_pole")
-
-[node name="Lamp" type="MeshInstance3D" parent="Park/LampPost" unique_id=1020403832]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.1, 0)
-cast_shadow = 0
-mesh = SubResource("SphereMesh_lamp")
+[node name="Model" parent="Park/LampPost" instance=ExtResource("lamp_model")]
+transform = Transform3D(1.4, 0, 0, 0, 1.4, 0, 0, 0, 1.4, 0, 0, 0)
 
 [node name="WorldCollision" type="StaticBody3D" parent="." unique_id=415013065]
 collision_mask = 0
@@ -367,22 +344,6 @@ script = ExtResource("19_shop")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.01, 0)
 mesh = SubResource("BoxMesh_tray")
 
-[node name="Title" type="Label3D" parent="PicnicTable/Shop" unique_id=335960966]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.09, -0.3)
-pixel_size = 0.001
-billboard = 2
-text = "SHOP"
-font_size = 48
-
-[node name="Info" type="Label3D" parent="PicnicTable/Shop" unique_id=1119790726]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, -0.05)
-visible = false
-pixel_size = 0.0006
-billboard = 2
-text = "Tower stats"
-font_size = 26
-outline_size = 10
-
 [node name="ArcherItem" parent="PicnicTable/Shop" unique_id=1802668162 node_paths=PackedStringArray("placer") instance=ExtResource("10_shop_item")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, -0.17)
 tower_scene = ExtResource("11_archer")
@@ -416,37 +377,29 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
 mesh = SubResource("BoxMesh_sign_panel")
 
 [node name="Text" type="Label3D" parent="PicnicTable/StatusSign" unique_id=1282872]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0.01)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.205, 0.01)
 pixel_size = 0.0008
-text = "Lives 20      Gold 150      Wave 0 / 10
-Next wave in 12"
-font_size = 40
+text = "Next wave in 12"
+font_size = 36
 outline_size = 0
 
 [node name="MenuButton" parent="PicnicTable" unique_id=681652491 instance=ExtResource("5_button")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.12, 0.76, -0.36)
 text = "MENU"
+icon = ExtResource("icon_menu")
 color = Color(0.25, 0.45, 0.8, 1)
 label_scale = 0.5
 
 [node name="RestartButton" parent="PicnicTable" unique_id=1262252664 instance=ExtResource("5_button")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.85, 0.76, -0.38)
 text = "RESTART"
+icon = ExtResource("icon_restart")
 color = Color(0.3, 0.7, 0.3, 1)
 label_scale = 0.5
 
 [node name="CardStation" parent="PicnicTable" unique_id=1130480111 node_paths=PackedStringArray("game") instance=ExtResource("17_station")]
 transform = Transform3D(0.9063078, 0, 0.42261827, 0, 1, 0, -0.42261827, 0, 0.9063078, -0.74, 0.76, 0.14)
 game = NodePath("../../Game")
-
-[node name="Banner" type="Label3D" parent="PicnicTable" unique_id=1448401476]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.95, 0.1)
-visible = false
-pixel_size = 0.0015
-billboard = 2
-text = "GAME OVER"
-font_size = 96
-outline_size = 24
 
 [node name="VendingMachine" parent="." unique_id=2093155452 node_paths=PackedStringArray("game", "station") instance=ExtResource("18_machine")]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 5)

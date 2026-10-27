@@ -208,7 +208,7 @@ func _build_markers() -> void:
 	ring.bottom_radius = 1.0
 	ring.height = 0.002
 	ring.radial_segments = 48
-	ring.material = _overlay_material(Color(1, 1, 1, 0.12))
+	ring.material = _overlay_material(Color(1, 1, 1, 0.25))
 	_range_ring = MeshInstance3D.new()
 	_range_ring.mesh = ring
 	_range_ring.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF

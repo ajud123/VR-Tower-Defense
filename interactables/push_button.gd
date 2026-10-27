@@ -2,10 +2,13 @@
 extends StaticBody3D
 ## Chunky arcade-style button. Poke it with a VR hand, point at it and pull
 ## the trigger, or aim at it and left click in desktop mode.
+## With an icon it's printed on the cap; otherwise the text floats above it.
 
 signal pressed
 
 const LABEL_PIXEL_SIZE := 0.002
+## How wide the icon is on the cap, in metres.
+const ICON_SIZE := 0.1
 
 @export var text: String = "BUTTON":
 	set(value):
@@ -17,6 +20,13 @@ const LABEL_PIXEL_SIZE := 0.002
 		color = value
 		if is_node_ready() and not Engine.is_editor_hint():
 			_update_cap()
+## Printed on top of the cap instead of the floating text. White on clear,
+## e.g. one of gameplay/icons/.
+@export var icon: Texture2D:
+	set(value):
+		icon = value
+		if is_node_ready():
+			_update_icon()
 ## Size of the text above the button, relative to the default.
 @export var label_scale: float = 1.0:
 	set(value):
@@ -37,6 +47,7 @@ var _next_press_msec: int = 0
 func _ready() -> void:
 	$Label3D.text = text
 	$Label3D.pixel_size = LABEL_PIXEL_SIZE * label_scale
+	_update_icon()
 	if Engine.is_editor_hint():
 		return
 	_cap_rest_y = _cap.position.y
@@ -74,3 +85,12 @@ func _update_cap() -> void:
 	_cap_material.emission_enabled = hovered
 	_cap_material.emission = color
 	_cap_material.emission_energy_multiplier = 0.8
+
+
+func _update_icon() -> void:
+	var sprite := $Cap/Icon as Sprite3D
+	sprite.texture = icon
+	sprite.visible = icon != null
+	if icon:
+		sprite.pixel_size = ICON_SIZE / icon.get_width()
+	$Label3D.visible = icon == null

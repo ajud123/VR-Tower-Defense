@@ -27,7 +27,7 @@ You sit at a park bench with a tabletop battlefield in front of you. Reach over 
 - **Engine**: Godot 4.x
 - **VR**: Godot XR Tools addon (OpenXR) for grabbing, placing, locomotion
 - **Version Control**: Git
-- **Assets**: Downloaded/free assets (TBD)
+- **Assets**: [Kenney](https://kenney.nl) CC0 model packs (`assets/kenney/`) and game-icons.net icons; see [CREDITS.md](CREDITS.md)
 
 ## Requirements
 
@@ -44,20 +44,25 @@ You sit at a park bench with a tabletop battlefield in front of you. Reach over 
 In VR, press a button by poking it with your hand or by pointing the laser at it
 and pulling the trigger.
 
-The board builds its tiles, enemy path, spawn portal and base from the values in
+The board builds its tiles (Kenney path pieces, turned to follow the path),
+enemy path, spawn portal and castle from the values in
 the inspector (grid size, tile size, path corners), and rebuilds live in the
 editor.
 
 ## How a game plays (current build)
 
-- 10 waves come down the path, each bigger and tougher. Tanks (big purple
-  blobs: slow, lots of HP, more gold) join from wave 2.
+- 10 waves of orcs come down the path, each bigger and tougher. Tanks (big
+  zombies: slow, lots of HP, more gold) join from wave 2.
 - Each enemy that reaches the castle costs a life. At 0 lives it's game over;
   clearing all 10 waves wins. Use RESTART or MENU on the table afterwards.
 - Killing enemies earns gold, and clearing a wave pays a bonus (30 + 10 per wave).
   Gold buys towers from the shop tray (hover one to see its stats):
   Archer (60, fast single shots), Cannon (100, slow splash) and Mage (140, long range, 1.5x damage vs tanks).
 - Towers can only go on free grass tiles, not on the path or on another tower.
+- Each shop tower has a price tag in front of it (red when you can't afford
+  it). The board behind the tray shows the stats of the tower you're
+  hovering: damage, attacks per second, range in tiles, and extras like
+  splash, burn, slow or bonus damage against tanks.
 
 **Cards (upgrades)**
 - The CARD-O-MATIC vending machine behind the bench opens at wave 3. Pull its
@@ -71,11 +76,20 @@ editor.
   - **Desktop:** click a card to pick it up (shown bottom right), then click a
     slot, the storage mat, another card (swaps), or anywhere to drop it.
     Right click drops it in front of you.
+- A card's front shows what it does as icons: who it affects (e.g. archer),
+  the stat in a badge (e.g. fire), and the amount. The back has the full
+  description; turn the card over in your hand to read it.
 - To add a card, drop a new `.tres` (script `gameplay/cards/card.gd`) into
   `gameplay/cards/pool/`. Effects are stat keys like `mage.fire_rate` or
-  `enemy.health`; `card.gd` lists them all.
+  `enemy.health`; `card.gd` lists them all. The front is drawn from those
+  keys using the icons in `gameplay/icons/` (named after the targets and
+  stats), so a new card only needs an icon if it uses a new target or stat.
 
 **Building a tower**
+- **VR:** whatever the grip would grab lights up first (a shop tower lifts
+  and gets a ring under it, a card glows). While your hand is touching
+  something the laser switches off, so you can't grab something behind it
+  by accident.
 - **VR:** squeeze the grip on a shop tower (touch it, or point the laser at it),
   carry it over the board and let go. The tile under it lights up green
   (OK) or red (blocked/too expensive). Let go anywhere else to put it back.
@@ -106,6 +120,8 @@ Settings if needed), or launch from the command line with
 - **Left click**: capture the cursor again
 
 This is a free-moving camera for development; it can pass through objects.
+
+Icon credits are in [CREDITS.md](CREDITS.md).
 
 ## Further details
 

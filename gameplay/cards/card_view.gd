@@ -17,6 +17,12 @@ const PICKABLE_LAYERS := 10
 const WORLD_LAYER := 1
 ## Where the card sits relative to a VR hand holding it.
 const HAND_OFFSET := Transform3D(Basis(), Vector3(0, -0.05, -0.02))
+## Just above the face, where the art is drawn. Stat icons sit on a badge
+## over the target icon; the layers are spread out so they don't z-fight.
+const ART_Z := 0.0026
+const BADGE_Z := ART_Z + 0.0004
+const STAT_Z := ART_Z + 0.0009
+const BADGE_COLOR := Color(0.1, 0.1, 0.12)
 
 var card: Card
 var station: CardStation
@@ -25,6 +31,8 @@ var state: State = State.LOOSE
 var _holder: Node3D
 var _hold_offset: Transform3D
 var _move_tween: Tween
+var _face_material := StandardMaterial3D.new()
+var _hover_count: int = 0
 
 
 func _ready() -> void:
@@ -32,11 +40,14 @@ func _ready() -> void:
 	collision_mask = WORLD_LAYER
 	continuous_cd = true
 	freeze_mode = RigidBody3D.FREEZE_MODE_KINEMATIC
-	var face := StandardMaterial3D.new()
-	face.albedo_color = card.color
-	$Face.material_override = face
+	_face_material.albedo_color = card.color
+	_face_material.emission = card.color
+	$Face.material_override = _face_material
 	$Title.text = card.title
-	$Description.text = card.description
+	$Back.text = "%s
+
+%s" % [card.title, card.description]
+	_draw_art()
 
 
 func _process(_delta: float) -> void:
@@ -113,6 +124,70 @@ func accept_card(other: CardView) -> bool:
 # Cards are picked up, not pressed; this just makes rays target them.
 func interact(_point: Vector3 = Vector3.ZERO) -> void:
 	pass
+
+
+# Lit up while a hand or pointer would pick it up.
+func hover_enter() -> void:
+	_hover_count += 1
+	_face_material.emission_enabled = true
+
+
+func hover_exit() -> void:
+	_hover_count = maxi(_hover_count - 1, 0)
+	_face_material.emission_enabled = _hover_count > 0
+
+
+## The front: what the card affects and how, as icons. One effect gets a big
+## picture (target, with the stat in a badge, and the amount below); several
+## get a row each.
+func _draw_art() -> void:
+	var effects := card.effects()
+	if effects.size() == 1:
+		var effect: Dictionary = effects[0]
+		_add_icon(effect.target, 0.036, Vector3(0, 0.003, ART_Z))
+		_add_badge(Vector3(0.016, -0.011, BADGE_Z), 0.011)
+		_add_icon(effect.stat, 0.016, Vector3(0.016, -0.011, STAT_Z), Icons.stat_color(effect.stat))
+		_add_text(effect.text, 34, Vector2(0, -0.03))
+		return
+	for i in mini(effects.size(), 3):
+		var effect: Dictionary = effects[i]
+		var y := 0.012 - i * 0.022
+		_add_icon(effect.target, 0.016, Vector3(-0.019, y, ART_Z))
+		_add_icon(effect.stat, 0.016, Vector3(-0.002, y, ART_Z), Icons.stat_color(effect.stat))
+		_add_text(effect.text, 20, Vector2(0.016, y))
+
+
+func _add_icon(key: String, size: float, at: Vector3, color: Color = Color.WHITE) -> void:
+	var icon := Icons.sprite(key, size, color)
+	icon.position = at
+	add_child(icon)
+
+
+## A dark disc for a stat icon to sit on, so it stands out from the target.
+func _add_badge(at: Vector3, radius: float) -> void:
+	var disc := CylinderMesh.new()
+	disc.top_radius = radius
+	disc.bottom_radius = radius
+	disc.height = 0.0002
+	disc.radial_segments = 24
+	var material := StandardMaterial3D.new()
+	material.albedo_color = BADGE_COLOR
+	disc.material = material
+	var badge := MeshInstance3D.new()
+	badge.mesh = disc
+	badge.rotation.x = PI / 2
+	badge.position = at
+	add_child(badge)
+
+
+func _add_text(text: String, font_size: int, at: Vector2) -> void:
+	var label := Label3D.new()
+	label.text = text
+	label.font_size = font_size
+	label.outline_size = font_size / 4
+	label.pixel_size = 0.0004
+	label.position = Vector3(at.x, at.y, ART_Z)
+	add_child(label)
 
 
 func _stop_moving() -> void:

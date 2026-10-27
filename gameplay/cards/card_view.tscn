@@ -37,7 +37,7 @@ mesh = SubResource("BoxMesh_frame")
 mesh = SubResource("BoxMesh_face")
 
 [node name="Title" type="Label3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.028, 0.0025)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.031, 0.0025)
 pixel_size = 0.0004
 text = "Card"
 font_size = 22
@@ -45,11 +45,11 @@ outline_size = 6
 autowrap_mode = 3
 width = 130.0
 
-[node name="Description" type="Label3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.012, 0.0025)
+[node name="Back" type="Label3D" parent="."]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, -0.0025)
 pixel_size = 0.0004
 text = ""
-font_size = 13
-outline_size = 4
+font_size = 15
+outline_size = 5
 autowrap_mode = 3
 width = 130.0

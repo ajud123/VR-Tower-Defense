@@ -21,6 +21,9 @@ extends Node3D
 @export var projectile_color: Color = Color.WHITE
 ## Height shots leave from, relative to the tower's base.
 @export var muzzle_height: float = 0.1
+## Optional weapon model that turns to face what the tower shoots at.
+## Kenney weapons point along +Z.
+@export var turret: Node3D
 
 ## Set by whoever builds the tower. Null means no cards apply.
 var upgrades: Upgrades
@@ -68,35 +71,35 @@ func get_slow() -> float:
 	return clampf(_bonus("slow"), 0.0, 0.9)
 
 
-## A few lines summing up the tower's current stats, cards included.
-func describe(tile_size: float) -> String:
-	var lines: Array[String] = [
-		"%s  -  %d gold" % [display_name, get_cost()],
-		"Damage %s   Attacks/s %.1f   Range %.1f tiles" % [
-			_number(get_damage()), 1.0 / get_fire_interval(), get_range() / tile_size
-		],
+## The tower's current stats, cards included, as {"icon", "text"} rows for
+## the shop's stat board. Icon keys are from gameplay/icons/.
+func stat_rows(tile_size: float) -> Array[Dictionary]:
+	var rows: Array[Dictionary] = [
+		{"icon": "damage", "text": _number(get_damage())},
+		{"icon": "fire_rate", "text": "%.1f/s" % (1.0 / get_fire_interval())},
+		{"icon": "range", "text": "%.1f" % (get_range() / tile_size)},
 	]
 	if get_splash_radius() > 0.0:
-		lines.append("Splash: hits everything within %.1f tiles" % (get_splash_radius() / tile_size))
+		rows.append({"icon": "splash_radius", "text": "%.1f" % (get_splash_radius() / tile_size)})
 	for enemy_kind in bonus_damage_vs:
-		lines.append("%sx damage vs %ss" % [_number(bonus_damage_vs[enemy_kind]), enemy_kind])
+		rows.append({"icon": enemy_kind, "text": "x" + _number(bonus_damage_vs[enemy_kind])})
 	if get_burn_dps() > 0.0:
-		lines.append("Sets enemies on fire (%s damage/s)" % _number(get_burn_dps()))
+		rows.append({"icon": "burn_dps", "text": "%s/s" % _number(get_burn_dps())})
 	if get_slow() > 0.0:
-		lines.append("Slows enemies by %d%%" % roundi(get_slow() * 100.0))
-	return "\n".join(lines)
+		rows.append({"icon": "slow", "text": "-%d%%" % roundi(get_slow() * 100.0)})
+	return rows
 
 
 func _process(delta: float) -> void:
 	if preview:
 		return
 	_cooldown -= delta
-	if _cooldown > 0.0:
-		return
 	var target := _find_target()
 	if target:
-		_cooldown = get_fire_interval()
-		_fire(target)
+		_aim_at(target)
+		if _cooldown <= 0.0:
+			_cooldown = get_fire_interval()
+			_fire(target)
 
 
 func _find_target() -> Enemy:
@@ -112,6 +115,13 @@ func _find_target() -> Enemy:
 		if best == null or enemy.progress > best.progress:
 			best = enemy
 	return best
+
+
+func _aim_at(target: Enemy) -> void:
+	if turret == null:
+		return
+	var offset := turret.global_position.direction_to(target.global_position)
+	turret.global_rotation.y = atan2(offset.x, offset.z)
 
 
 func _fire(target: Enemy) -> void:

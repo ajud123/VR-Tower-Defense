@@ -1,14 +1,7 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" uid="uid://cmb82krqxtwpy" path="res://gameplay/enemies/enemy.gd" id="1_enemy"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_body"]
-albedo_color = Color(0.42, 0.22, 0.58, 1)
-
-[sub_resource type="SphereMesh" id="SphereMesh_body"]
-material = SubResource("StandardMaterial3D_body")
-radius = 0.025
-height = 0.05
+[ext_resource type="PackedScene" path="res://assets/kenney/graveyard/character-zombie.glb" id="2_model"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bar_back"]
 shading_mode = 0
@@ -34,14 +27,12 @@ kind = "tank"
 base_health = 30.0
 base_speed = 0.034
 base_reward = 15
-hop_height = 0.005
 
-[node name="Body" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.025, 0)
-mesh = SubResource("SphereMesh_body")
+[node name="Body" parent="." instance=ExtResource("2_model")]
+transform = Transform3D(0.08, 0, 0, 0, 0.08, 0, 0, 0, 0.08, 0, 0, 0)
 
 [node name="HealthBar" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.072, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.076, 0)
 
 [node name="Back" type="MeshInstance3D" parent="HealthBar"]
 cast_shadow = 0

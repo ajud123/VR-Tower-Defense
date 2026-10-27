@@ -110,9 +110,8 @@ shape = SubResource("BoxShape3D_storage")
 transform = Transform3D(1, 0, 0, 0, 0.2588190, 0.9659258, 0, -0.9659258, 0.2588190, 0, 0.022, -0.02)
 
 [node name="Info" type="Label3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.17, 0.2)
-pixel_size = 0.0006
-billboard = 2
+transform = Transform3D(1, 0, 0, 0, 0.342020, 0.939693, 0, -0.939693, 0.342020, 0, 0.012, -0.12)
+pixel_size = 0.0005
 text = "CARDS"
 font_size = 28
 outline_size = 10

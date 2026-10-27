@@ -4,16 +4,35 @@ extends Node3D
 ## The tabletop battlefield: a grid of tiles with one enemy path winding
 ## through it. Builds its own visuals from the exported layout, so tweak the
 ## numbers in the inspector and the board rebuilds live in the editor.
+## Tiles, castle and portal pad are Kenney models (assets/kenney/); path
+## tiles are picked and turned to match where the path goes.
 ##
 ## The node's origin is the centre of the board's underside; set it straight
 ## onto the table top. Cell (0, 0) is the far-left corner as seen by the player.
 
 const BORDER := 0.04
 const BASE_THICKNESS := 0.035
-const TILE_THICKNESS := 0.012
-const TILE_GAP := 0.004
-## How far path tiles sit below the grass, so the road reads as a groove.
-const PATH_SINK := 0.004
+## Kenney tiles are 1 x 0.2 x 1 with the path floor at half height, so these
+## are fractions of the tile size.
+const TILE_HEIGHT := 0.2
+const PATH_SINK := 0.1
+
+const TD_KIT := "res://assets/kenney/tower_defense/"
+const CASTLE_KIT := "res://assets/kenney/castle/"
+const GRASS_TILE := preload(TD_KIT + "tile.glb")
+## Path tiles, with the sides their path opens to when not rotated.
+const PATH_TILES := {
+	"straight": [preload(TD_KIT + "tile-straight.glb"), [Vector2i(0, 1), Vector2i(0, -1)]],
+	"corner": [preload(TD_KIT + "tile-corner-round.glb"), [Vector2i(1, 0), Vector2i(0, 1)]],
+	"end": [preload(TD_KIT + "tile-end-round.glb"), [Vector2i(0, 1)]],
+	"spawn": [preload(TD_KIT + "tile-spawn-end.glb"), [Vector2i(0, 1)]],
+}
+const CASTLE_PARTS := [
+	preload(CASTLE_KIT + "tower-square-base.glb"),
+	preload(CASTLE_KIT + "tower-square-top-roof-high.glb"),
+]
+## Castle size relative to a tile.
+const CASTLE_SCALE := 0.7
 
 @export var columns: int = 12:
 	set(value):
@@ -39,14 +58,6 @@ const PATH_SINK := 0.004
 		_queue_rebuild()
 
 @export_group("Colors")
-@export var grass_color: Color = Color(0.36, 0.62, 0.28):
-	set(value):
-		grass_color = value
-		_queue_rebuild()
-@export var path_color: Color = Color(0.78, 0.66, 0.45):
-	set(value):
-		path_color = value
-		_queue_rebuild()
 @export var frame_color: Color = Color(0.3, 0.2, 0.12):
 	set(value):
 		frame_color = value
@@ -55,7 +66,7 @@ const PATH_SINK := 0.004
 ## Height of the grass surface above the node's origin.
 var surface_height: float:
 	get:
-		return BASE_THICKNESS + TILE_THICKNESS
+		return BASE_THICKNESS + TILE_HEIGHT * tile_size
 
 var _path_cells: Array[Vector2i] = []
 var _path_lookup: Dictionary = {}
@@ -71,7 +82,7 @@ func _ready() -> void:
 
 ## Centre of a cell's top surface, in board-local space.
 func cell_to_local(cell: Vector2i) -> Vector3:
-	var top := surface_height - (PATH_SINK if is_path_cell(cell) else 0.0)
+	var top := surface_height - (PATH_SINK * tile_size if is_path_cell(cell) else 0.0)
 	return Vector3(
 		(cell.x - (columns - 1) * 0.5) * tile_size,
 		top,
@@ -190,41 +201,59 @@ func _build_frame() -> void:
 
 
 func _build_tiles() -> void:
-	var tile := BoxMesh.new()
-	tile.size = Vector3(tile_size - TILE_GAP, TILE_THICKNESS, tile_size - TILE_GAP)
-	var material := _material(Color.WHITE)
-	material.vertex_color_use_as_albedo = true
-	material.vertex_color_is_srgb = true
-	tile.material = material
-
-	var multimesh := MultiMesh.new()
-	multimesh.transform_format = MultiMesh.TRANSFORM_3D
-	multimesh.use_colors = true
-	multimesh.mesh = tile
-	multimesh.instance_count = columns * rows
-
-	var i := 0
+	var tiles := Node3D.new()
+	tiles.name = "Tiles"
+	_visuals.add_child(tiles)
 	for y in rows:
 		for x in columns:
 			var cell := Vector2i(x, y)
-			var center := cell_to_local(cell) - Vector3(0, TILE_THICKNESS * 0.5, 0)
-			multimesh.set_instance_transform(i, Transform3D(Basis(), center))
-			multimesh.set_instance_color(i, _tile_color(cell))
-			i += 1
+			var scene: PackedScene = GRASS_TILE
+			var turns := 0
+			if is_path_cell(cell):
+				var piece := _path_piece(cell)
+				scene = PATH_TILES[piece][0]
+				turns = _turns_to_fit(PATH_TILES[piece][1], _path_openings(cell))
+			var tile: Node3D = scene.instantiate()
+			var center := cell_to_local(cell)
+			var basis := Basis(Vector3.UP, turns * PI * 0.5).scaled(Vector3.ONE * tile_size)
+			tile.transform = Transform3D(basis, Vector3(center.x, BASE_THICKNESS, center.z))
+			tiles.add_child(tile)
 
-	var instance := MultiMeshInstance3D.new()
-	instance.name = "Tiles"
-	instance.multimesh = multimesh
-	_visuals.add_child(instance)
+
+## The directions (in cells) the path leaves this path cell in.
+func _path_openings(cell: Vector2i) -> Array[Vector2i]:
+	var openings: Array[Vector2i] = []
+	var i := _path_cells.find(cell)
+	if i > 0:
+		openings.append(_path_cells[i - 1] - cell)
+	if i < _path_cells.size() - 1:
+		openings.append(_path_cells[i + 1] - cell)
+	return openings
 
 
-func _tile_color(cell: Vector2i) -> Color:
-	# A little stable per-tile noise so the board doesn't look flat.
-	var jitter := (hash(cell) % 100) / 100.0 * 0.06
-	if is_path_cell(cell):
-		return path_color.darkened(jitter)
-	var checker := 0.07 if (cell.x + cell.y) % 2 == 0 else 0.0
-	return grass_color.darkened(checker + jitter)
+func _path_piece(cell: Vector2i) -> String:
+	var openings := _path_openings(cell)
+	if cell == _path_cells[0]:
+		return "spawn"
+	if openings.size() < 2:
+		return "end"
+	return "straight" if openings[0] == -openings[1] else "corner"
+
+
+## How many quarter turns around +Y make a tile's openings match `wanted`.
+func _turns_to_fit(openings: Array, wanted: Array[Vector2i]) -> int:
+	for turns in 4:
+		var turned := openings.map(func(side: Vector2i) -> Vector2i: return _turn(side, turns))
+		if turned.size() == wanted.size() and wanted.all(func(side: Vector2i) -> bool: return side in turned):
+			return turns
+	return 0
+
+
+## A grid direction turned by quarter turns around +Y (+x goes to -z).
+func _turn(side: Vector2i, turns: int) -> Vector2i:
+	for i in turns:
+		side = Vector2i(side.y, -side.x)
+	return side
 
 
 func _build_spawn_portal() -> void:
@@ -254,19 +283,22 @@ func _build_base() -> void:
 	if _path_cells.is_empty():
 		return
 	var end := cell_to_local(_path_cells[-1])
-	var keep := BoxMesh.new()
-	var keep_size := tile_size * 0.75
-	keep.size = Vector3(keep_size, keep_size * 0.8, keep_size)
-	keep.material = _material(Color(0.6, 0.62, 0.68))
-	_add_mesh(keep, end + Vector3(0, keep.size.y * 0.5, 0))
+	var height := 0.0
+	for part: PackedScene in CASTLE_PARTS:
+		var piece: Node3D = part.instantiate()
+		piece.scale = Vector3.ONE * tile_size * CASTLE_SCALE
+		piece.position = end + Vector3(0, height, 0)
+		_visuals.add_child(piece)
+		height += _height_of(piece)
 
-	var roof := CylinderMesh.new()
-	roof.top_radius = 0.0
-	roof.bottom_radius = keep_size * 0.65
-	roof.height = keep_size * 0.7
-	roof.radial_segments = 4
-	roof.material = _material(Color(0.2, 0.4, 0.85))
-	_add_mesh(roof, end + Vector3(0, keep.size.y + roof.height * 0.5, 0), Basis(Vector3.UP, PI * 0.25))
+
+## Height of a model's meshes, in the model's parent's space.
+func _height_of(model: Node3D) -> float:
+	var top := 0.0
+	for mesh: MeshInstance3D in model.find_children("*", "MeshInstance3D", true, false):
+		var box := mesh.get_aabb()
+		top = maxf(top, (box.position.y + box.size.y) * mesh.transform.basis.get_scale().y)
+	return top * model.scale.y
 
 
 func _add_mesh(mesh: Mesh, origin: Vector3, orientation := Basis()) -> MeshInstance3D:
