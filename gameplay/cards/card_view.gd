@@ -15,8 +15,8 @@ const MOVE_TIME := 0.35
 ## Interactable + grabbable, so rays and hands find it.
 const PICKABLE_LAYERS := 10
 const WORLD_LAYER := 1
-## Where the card sits relative to a VR hand holding it.
-const HAND_OFFSET := Transform3D(Basis(), Vector3(0, -0.05, -0.02))
+## Where the card sits relative to a VR hand holding it (anchored near the bottom).
+const HAND_OFFSET := Transform3D(Basis(), Vector3(0, 0.05, -0.02))
 ## The face is the card's colour darkened by this much, so the white icons
 ## and text on it stay readable even on yellow cards.
 const FACE_DARKEN := 0.45
