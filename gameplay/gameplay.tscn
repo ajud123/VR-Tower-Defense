@@ -18,11 +18,12 @@
 [ext_resource type="PackedScene" path="res://gameplay/cards/card_station.tscn" id="17_station"]
 [ext_resource type="PackedScene" path="res://gameplay/vending_machine/vending_machine.tscn" id="18_machine"]
 [ext_resource type="Script" uid="uid://r788y2t52x6x" path="res://gameplay/shop.gd" id="19_shop"]
-[ext_resource type="PackedScene" path="res://gameplay/hammer/hammer.tscn" id="hammer"]
+[ext_resource type="PackedScene" uid="uid://5tntpyk0dl6n" path="res://gameplay/hammer/hammer.tscn" id="hammer"]
 [ext_resource type="Texture2D" uid="uid://06rsl18s3kjk" path="res://gameplay/icons/menu.svg" id="icon_menu"]
 [ext_resource type="Texture2D" uid="uid://dngonew4v4kt1" path="res://gameplay/icons/restart.svg" id="icon_restart"]
 [ext_resource type="PackedScene" uid="uid://d1qmmmdrbhdbc" path="res://assets/kenney/graveyard/lightpost-single.glb" id="lamp_model"]
 [ext_resource type="Script" uid="uid://63vlrqt6x8mj" path="res://gameplay/lamp_post.gd" id="lamp_script"]
+[ext_resource type="PackedScene" uid="uid://dgb2xtbuvam6t" path="res://gameplay/magnifier/magnifier.tscn" id="magnifier_scene"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sky"]
 sky_top_color = Color(0.3, 0.52, 0.85, 1)
@@ -408,6 +409,10 @@ game = NodePath("../../Game")
 transform = Transform3D(0, -1, 0, -1, 0, 0, 0, 0, -1, 0.5, 0.78, 0.41)
 board = NodePath("../Board")
 game = NodePath("../../Game")
+
+[node name="Magnifier" parent="PicnicTable" unique_id=1649268423 node_paths=PackedStringArray("sun") instance=ExtResource("magnifier_scene")]
+transform = Transform3D(0.57667476, -0.816974, 3.5711057e-08, 0, -4.3711392e-08, -0.9999999, 0.81697387, 0.5766748, -2.5207251e-08, -0.5893769, 0.7715251, 0.33270767)
+sun = NodePath("../../Sun")
 
 [node name="VendingMachine" parent="." unique_id=2093155452 node_paths=PackedStringArray("game", "station") instance=ExtResource("18_machine")]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 5)

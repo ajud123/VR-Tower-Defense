@@ -47,6 +47,7 @@ height = 0.025
 radius = 0.07
 
 [node name="Magnifier" type="StaticBody3D" unique_id=1481372230]
+collision_layer = 10
 script = ExtResource("1_1xtr6")
 
 [node name="Handle" type="MeshInstance3D" parent="." unique_id=1916705943]
@@ -70,6 +71,7 @@ shape = SubResource("CylinderShape3D_1xtr6")
 
 [node name="SpotLight3D" type="SpotLight3D" parent="." unique_id=1842077030]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.120522976, 0)
-spot_range = 0.1
-spot_attenuation = 2.0
-spot_angle = 20.0
+light_color = Color(1, 0.941176, 0.745098, 1)
+light_energy = 0.0
+spot_range = 1.5
+spot_angle = 18.0
