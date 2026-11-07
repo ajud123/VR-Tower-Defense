@@ -1,0 +1,75 @@
+[gd_scene format=3 uid="uid://dgb2xtbuvam6t"]
+
+[ext_resource type="Script" uid="uid://c4ydyx2xbh5ve" path="res://gameplay/magnifier/magnifier.gd" id="1_1xtr6"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_32wv8"]
+albedo_color = Color(0.3515629, 0.3515629, 0.35156286, 1)
+clearcoat_enabled = true
+clearcoat_roughness = 0.4
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_1xtr6"]
+material = SubResource("StandardMaterial3D_32wv8")
+top_radius = 0.01
+bottom_radius = 0.012
+height = 0.1
+radial_segments = 32
+rings = 3
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_p2dmx"]
+transparency = 4
+albedo_color = Color(0.79607844, 1, 1, 0.12156863)
+metallic = 0.65
+metallic_specular = 1.0
+roughness = 0.0
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_j7ij6"]
+material = SubResource("StandardMaterial3D_p2dmx")
+top_radius = 0.065
+bottom_radius = 0.065
+height = 0.011
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mcorl"]
+metallic = 1.0
+roughness = 0.4
+
+[sub_resource type="TorusMesh" id="TorusMesh_j8vkt"]
+material = SubResource("StandardMaterial3D_mcorl")
+inner_radius = 0.06
+outer_radius = 0.07
+rings = 32
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_32wv8"]
+radius = 0.0126953125
+height = 0.105285645
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_1xtr6"]
+height = 0.025
+radius = 0.07
+
+[node name="Magnifier" type="StaticBody3D" unique_id=1481372230]
+script = ExtResource("1_1xtr6")
+
+[node name="Handle" type="MeshInstance3D" parent="." unique_id=1916705943]
+mesh = SubResource("CylinderMesh_1xtr6")
+
+[node name="Lens" type="MeshInstance3D" parent="." unique_id=664367286]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0.116265506, 0)
+mesh = SubResource("CylinderMesh_j7ij6")
+
+[node name="Frame" type="MeshInstance3D" parent="." unique_id=870359653]
+transform = Transform3D(1, 0, 0, 0, -1.2261044e-07, -1, 0, 2.805, -4.371139e-08, 0, 0.11385731, 0)
+mesh = SubResource("TorusMesh_j8vkt")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1423933848]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0002746582, 0)
+shape = SubResource("CapsuleShape3D_32wv8")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="." unique_id=422171544]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0.115165204, 0)
+shape = SubResource("CylinderShape3D_1xtr6")
+
+[node name="SpotLight3D" type="SpotLight3D" parent="." unique_id=1842077030]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.120522976, 0)
+spot_range = 0.1
+spot_attenuation = 2.0
+spot_angle = 20.0

@@ -1,0 +1,2 @@
+class_name Magnifier
+extends StaticBody3D
