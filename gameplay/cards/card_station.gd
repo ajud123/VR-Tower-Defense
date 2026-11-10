@@ -68,9 +68,23 @@ func place(view: CardView, slot: int) -> bool:
 	return true
 
 
+## Permanently destroys a card (e.g. recycled), removing it from station and upgrades.
+func destroy_card(view: CardView) -> void:
+	_stored.erase(view)
+	if view.card:
+		_views.erase(view.card)
+		game.upgrades.remove_card(view.card)
+	view.queue_free()
+	_layout()
+
+
 ## VR drop: into the nearest slot or storage if the card is over one,
 ## otherwise it falls where it is.
 func put_down(view: CardView) -> void:
+	var recycler := get_tree().get_first_node_in_group("recycler")
+	if recycler and recycler.has_method("is_point_in_hopper") and recycler.is_point_in_hopper(view.global_position):
+		recycler.accept_card(view)
+		return
 	var slot := _nearest_slot(view.global_position)
 	if slot != -1:
 		place(view, slot)

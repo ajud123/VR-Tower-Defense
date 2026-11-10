@@ -25,9 +25,11 @@ const MIN_COMMON_WEIGHT := 1.0
 
 var _message_until: int = 0
 var _commons_in_a_row: int = 0
+var _base_price: int = 100
 
 
 func _ready() -> void:
+	_base_price = price
 	$Lever.pulled.connect(_on_lever_pulled)
 	_build_display()
 
@@ -55,14 +57,22 @@ func _on_lever_pulled() -> void:
 	if choices.is_empty():
 		_say("SOLD OUT")
 		return
+	var cost_paid := price
 	if not game.spend(price):
 		_say("NOT ENOUGH\nGOLD\n\n%d needed" % price)
 		return
 	price += price_step
 	var card := _pick_weighted(choices)
 	# Pop it out of the slot towards the player.
-	station.spawn_card(card, _output.global_position, global_basis.z * 1.2 + Vector3.UP * 0.8)
+	var view := station.spawn_card(card, _output.global_position, global_basis.z * 1.2 + Vector3.UP * 0.8)
+	view.paid = cost_paid
 	_say("YOU GOT\n%s!\n\n%s" % [card.title.to_upper(), Card.RARITY_NAMES[card.rarity].to_upper()])
+	_build_display()
+
+
+## Refunds a card: steps the machine's price back down and refreshes the showcase display.
+func refund_card(_card_view: CardView = null) -> void:
+	price = maxi(price - price_step, _base_price)
 	_build_display()
 
 

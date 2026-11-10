@@ -1,0 +1,5 @@
+[gd_scene format=3 uid="uid://cj7tgnhy7gndn"]
+
+[ext_resource type="PackedScene" path="res://gameplay/recycler/recycler.tscn" id="1_recycler"]
+
+[node name="RecyclingMachine" instance=ExtResource("1_recycler")]

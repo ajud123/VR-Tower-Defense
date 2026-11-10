@@ -1,0 +1,113 @@
+[gd_scene format=3 uid="uid://cu2nv1dpbky1a"]
+
+[ext_resource type="Script" uid="uid://cv8tes5i0qkmw" path="res://gameplay/recycler/recycler.gd" id="1_recycler"]
+[ext_resource type="PackedScene" uid="uid://q3orm40mfh02" path="res://assets/Recycler.blend" id="2_blend"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_body"]
+size = Vector3(1, 0.571167, 0.8170166)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_side_left"]
+size = Vector3(0.05847168, 0.29003906, 0.71313477)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_side_right"]
+size = Vector3(0.06298828, 0.29003906, 0.71313477)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_back"]
+size = Vector3(1, 0.42214966, 0.13911438)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_front"]
+size = Vector3(1, 0.08850098, 0.14932251)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_slope"]
+size = Vector3(1, 0.08850098, 0.17427063)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_hopper"]
+size = Vector3(0.9, 0.35, 0.6)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_spark"]
+shading_mode = 0
+albedo_color = Color(1, 0.85, 0.3, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_spark"]
+material = SubResource("StandardMaterial3D_spark")
+size = Vector3(0.015, 0.015, 0.015)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_shred"]
+shading_mode = 0
+vertex_color_use_as_albedo = true
+
+[sub_resource type="BoxMesh" id="BoxMesh_shred"]
+material = SubResource("StandardMaterial3D_shred")
+size = Vector3(0.025, 0.005, 0.025)
+
+[node name="Recycler" type="StaticBody3D" unique_id=968295513]
+collision_layer = 10
+collision_mask = 0
+script = ExtResource("1_recycler")
+
+[node name="CollisionShape3D_Base" type="CollisionShape3D" parent="." unique_id=1216642253]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2144165, -0.016296387)
+shape = SubResource("BoxShape3D_body")
+
+[node name="CollisionShape3D_Left" type="CollisionShape3D" parent="." unique_id=26216182]
+transform = Transform3D(1, 0, 0, 0, 0.89492655, -0.44621342, 0, 0.44621342, 0.89492655, 0.47076416, 0.174063, -0.037065126)
+shape = SubResource("BoxShape3D_side_left")
+
+[node name="CollisionShape3D_Right" type="CollisionShape3D" parent="." unique_id=1337485892]
+transform = Transform3D(1, 0, 0, 0, 0.89492655, -0.44621342, 0, 0.44621342, 0.89492655, -0.46850586, 0.174063, -0.037065126)
+shape = SubResource("BoxShape3D_side_right")
+
+[node name="CollisionShape3D_Back" type="CollisionShape3D" parent="." unique_id=1313707653]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25061634, -0.36146536)
+shape = SubResource("BoxShape3D_back")
+
+[node name="CollisionShape3D_Front" type="CollisionShape3D" parent="." unique_id=1821915531]
+transform = Transform3D(1, 0, 0, 0, 0.8180493, 0.57514805, 0, -0.57514805, 0.8180493, 0, 0.06345741, 0.30489743)
+shape = SubResource("BoxShape3D_front")
+
+[node name="CollisionShape3D_Slope" type="CollisionShape3D" parent="." unique_id=677200152]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.10136528, -0.22730798)
+shape = SubResource("BoxShape3D_slope")
+
+[node name="Model" parent="." unique_id=664489514 instance=ExtResource("2_blend")]
+
+[node name="Hopper" type="Area3D" parent="." unique_id=1630306326]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, -0.02)
+collision_layer = 0
+collision_mask = 10
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hopper" unique_id=1931267845]
+shape = SubResource("BoxShape3D_hopper")
+
+[node name="Screen" type="Label3D" parent="." unique_id=510521214]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.18, 0.43)
+pixel_size = 0.001
+modulate = Color(0.3, 0.9, 0.45, 1)
+text = "RECYCLER
+Scrap cards
+for refund"
+font_size = 38
+outline_size = 8
+
+[node name="Sparks" type="CPUParticles3D" parent="." unique_id=240690657]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, -0.02)
+emitting = false
+amount = 16
+lifetime = 0.3
+mesh = SubResource("BoxMesh_spark")
+direction = Vector3(0, 1, 0)
+gravity = Vector3(0, -2, 0)
+initial_velocity_min = 0.8
+initial_velocity_max = 1.6
+
+[node name="Shreds" type="CPUParticles3D" parent="." unique_id=933213416]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, -0.02)
+emitting = false
+amount = 20
+lifetime = 0.45
+mesh = SubResource("BoxMesh_shred")
+direction = Vector3(0, 1, 0)
+spread = 60.0
+gravity = Vector3(0, -3, 0)
+initial_velocity_min = 0.6
+initial_velocity_max = 1.2

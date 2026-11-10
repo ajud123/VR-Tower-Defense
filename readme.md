@@ -116,6 +116,13 @@ editor.
   keys using the icons in `gameplay/icons/` (named after the targets and
   stats), so a new card only needs an icon if it uses a new target or stat.
 
+**Scrapping cards (the Recycler)**
+- Standing right next to the vending machine is the card Recycler. If you pull a card you don't need or want your money back to re-roll, feed it into the recycler to shred it and get your gold back.
+- **Refund & Price Stepping:** Pays out 100% of the gold you spent on that card, returns the card back into the vending machine's unowned card pool (updating its display), and steps the vending machine's price back down by 150 gold so your next pull doesn't suffer an inflation penalty.
+- **Visuals:** The twin shredder drums accelerate from idle into high gear, chewing the card down into the chute with grinding sparks and paper scraps matching the card's color, finishing with a golden payout burst and a floating refund indicator (`+XXX GOLD`).
+- **VR:** Grab any card and drop or toss it directly into the top hopper chute.
+- **Desktop:** Click a card to pick it up, then click the Recycler machine to feed it in.
+
 **Building a tower**
 - **VR:** whatever the grip would grab lights up first (a shop tower lifts
   and gets a ring under it, a card glows). While your hand is touching

@@ -69,6 +69,12 @@ func unequip(card: Card) -> void:
 		changed.emit()
 
 
+func remove_card(card: Card) -> void:
+	unequip(card)
+	owned.erase(card)
+	changed.emit()
+
+
 ## Product of every active multiplier for "<group>.<stat>" and "<kind>.<stat>".
 func multiplier(group: String, kind: String, stat: String) -> float:
 	var result := 1.0

@@ -30,6 +30,7 @@ const BADGE_COLOR := Color(0.1, 0.1, 0.12)
 var card: Card
 var station: CardStation
 var state: State = State.LOOSE
+var paid: int = 0
 
 var _holder: Node3D
 var _hold_offset: Transform3D

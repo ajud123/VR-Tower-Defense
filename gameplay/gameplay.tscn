@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" path="res://gameplay/park_tree.tscn" id="6_tree"]
 [ext_resource type="Script" uid="uid://rdw3csirdy0f" path="res://gameplay/game_state.gd" id="7_game"]
 [ext_resource type="Script" uid="uid://n7awxpd65mx6" path="res://gameplay/tower_placer.gd" id="9_placer"]
+[ext_resource type="PackedScene" path="res://gameplay/recycler/recycler.tscn" id="9_s60jr"]
 [ext_resource type="PackedScene" path="res://gameplay/shop_item.tscn" id="10_shop_item"]
 [ext_resource type="PackedScene" path="res://gameplay/towers/archer_tower.tscn" id="11_archer"]
 [ext_resource type="PackedScene" path="res://gameplay/towers/cannon_tower.tscn" id="12_cannon"]
@@ -418,6 +419,12 @@ sun = NodePath("../../Sun")
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 5)
 game = NodePath("../Game")
 station = NodePath("../PicnicTable/CardStation")
+
+[node name="Recycler" parent="." unique_id=839595052 node_paths=PackedStringArray("game", "station", "vending_machine") instance=ExtResource("9_s60jr")]
+transform = Transform3D(-0.7071067, 0, 0.7071068, 0, 1, 0, -0.7071068, 0, -0.7071067, -1.1558615, 0.42176926, 4.893278)
+game = NodePath("../Game")
+station = NodePath("../PicnicTable/CardStation")
+vending_machine = NodePath("../VendingMachine")
 
 [connection signal="ended" from="Game" to="." method="_on_game_ended"]
 [connection signal="pressed" from="PicnicTable/MenuButton" to="." method="_on_menu_button_pressed"]
