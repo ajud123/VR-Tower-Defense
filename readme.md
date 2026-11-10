@@ -72,7 +72,7 @@ editor.
 - Every tower of a kind you already have makes the next one of that kind
   cost 35% more (the price tag shows the current price), so mixing tower
   types is cheaper. Selling one with the hammer brings the price back down.
-- Towers can only go on free grass tiles, not on the path or on another tower.
+- Towers can be built on free grass tiles, or stacked on top of an existing tower of the same type to upgrade it (up to Level 3). Each upgrade increases damage (+75%), fire rate (+20%), and range (+15%), physically adds an extra floor/tier to the tower model, and raises its turret. When sold, the hammer refunds 70% of the total gold invested across all upgrades.
 - Each shop tower has a price tag in front of it (red when you can't afford
   it). The board behind the tray shows the stats of the tower you're
   hovering: damage, attacks per second, range in tiles, and extras like
@@ -122,11 +122,12 @@ editor.
   something the laser switches off, so you can't grab something behind it
   by accident.
 - **VR:** squeeze the grip on a shop tower (touch it, or point the laser at it),
-  carry it over the board and let go. The tile under it lights up green
-  (OK) or red (blocked/too expensive). Let go anywhere else to put it back.
-  You can also point and pull the trigger, like on desktop.
-- **Desktop:** click a shop tower, then click a tile. Right click (or clicking the
-  same shop tower again) cancels.
+  carry it over the board and let go. The tile under it lights up green (build new),
+  gold (upgrade existing tower), or red (blocked/too expensive). Dropping a matching tower
+  on top of an existing one stacks and upgrades it with a haptic pulse, golden burst, and level popup.
+  Let go anywhere else to put it back. You can also point and pull the trigger, like on desktop.
+- **Desktop:** click a shop tower, then click a tile (or an existing tower of the same kind to upgrade it).
+  Right click (or clicking the same shop tower again) cancels.
 
 Tower stats live on the tower scenes in `gameplay/towers/`, enemy stats on
 `gameplay/enemies/blob.tscn` / `tank.tscn`, wave sizes and scaling in

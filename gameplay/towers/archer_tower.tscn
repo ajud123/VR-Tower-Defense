@@ -5,8 +5,9 @@
 [ext_resource type="PackedScene" path="res://assets/kenney/tower_defense/tower-round-top-a.glb" id="m1"]
 [ext_resource type="PackedScene" path="res://assets/kenney/tower_defense/weapon-ballista.glb" id="m2"]
 [ext_resource type="PackedScene" path="res://assets/kenney/tower_defense/weapon-ammo-arrow.glb" id="ammo"]
+[ext_resource type="PackedScene" path="res://assets/kenney/tower_defense/tower-round-middle-a.glb" id="piece_middle"]
 
-[node name="ArcherTower" type="Node3D" node_paths=PackedStringArray("turret")]
+[node name="ArcherTower" type="Node3D" node_paths=PackedStringArray("turret", "top_nodes")]
 script = ExtResource("1_tower")
 display_name = "Archer"
 kind = "archer"
@@ -21,6 +22,9 @@ projectile_model_scale = 0.045
 projectile_arc = 0.015
 muzzle_height = 0.085
 turret = NodePath("Model/Turret")
+upgrade_piece = ExtResource("piece_middle")
+upgrade_piece_height = 0.6
+top_nodes = [NodePath("Model/Piece2"), NodePath("Model/Turret")]
 
 [node name="Model" type="Node3D" parent="."]
 transform = Transform3D(0.065, 0, 0, 0, 0.065, 0, 0, 0, 0.065, 0, 0, 0)

@@ -16,7 +16,7 @@ const RETURN_TIME := 0.4
 ## How the hammer sits in a hand: handle pointing forward, head faces up/down.
 const HAND_OFFSET := Transform3D(Basis(Vector3.RIGHT, -PI * 0.5), Vector3(0, 0, 0.03))
 ## Height above the board's surface a tower can be hit at.
-const TOWER_HEIGHT := 0.14
+const TOWER_HEIGHT := 0.25
 const DEBRIS_LIFETIME := 1.4
 const GOLD_COLOR := Color(1.0, 0.82, 0.25)
 const DUST_COLOR := Color(0.8, 0.75, 0.7, 0.8)

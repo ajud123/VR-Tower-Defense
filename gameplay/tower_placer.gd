@@ -9,12 +9,13 @@ extends StaticBody3D
 ## tile a tower would land on: green if it can be built there, red if not.
 
 ## How high above the board a carried tower can be let go and still land.
-const DROP_HEIGHT := 0.3
+const DROP_HEIGHT := 0.38
 ## Where a carried tower hangs relative to the hand holding it.
 const CARRY_OFFSET := Vector3(0, -0.07, 0)
 const NO_CELL := Vector2i(-1, -1)
 const BUILDABLE_COLOR := Color(0.3, 1.0, 0.4, 0.55)
 const BLOCKED_COLOR := Color(1.0, 0.25, 0.2, 0.55)
+const UPGRADE_COLOR := Color(1.0, 0.82, 0.2, 0.75)
 ## Each tower of the same kind already on the board makes the next one cost
 ## this much more (0.35 = +35%), so mixing tower types pays off.
 const SAME_KIND_PRICE_GROWTH := 0.35
@@ -32,9 +33,11 @@ var _ghost: Tower
 ## Where a pointer last hit the board surface, or null when none is on it.
 var _surface_point: Variant = null
 var _hover_count: int = 0
+var _last_hover_cell: Vector2i = NO_CELL
 var _marker: MeshInstance3D
 var _marker_material: StandardMaterial3D
 var _range_ring: MeshInstance3D
+var _range_ring_material: StandardMaterial3D
 
 
 func _ready() -> void:
@@ -66,10 +69,20 @@ func _process(_delta: float) -> void:
 		if not board.is_in_bounds(cell):
 			cell = NO_CELL
 		else:
-			_ghost.position = board.cell_to_local(cell)
+			var target_pos := board.cell_to_local(cell)
+			var existing := board.tower_at(cell) as Tower
+			if existing and _ghost and existing.kind == _ghost.kind and existing.can_upgrade():
+				target_pos.y += existing.get_top_height()
+			_ghost.position = target_pos
 		_ghost.visible = cell != NO_CELL
 	elif _ghost:
 		_ghost.visible = false
+
+	if cell != _last_hover_cell:
+		_last_hover_cell = cell
+		if cell != NO_CELL and _can_upgrade(cell) and _carry_hand and _carry_hand.has_method("pulse"):
+			_carry_hand.pulse(0.25, 0.04)
+
 	_update_markers(cell)
 
 
@@ -143,6 +156,7 @@ func _end_carry() -> void:
 		return
 	_carry_hand = null
 	_carry_scene = null
+	_last_hover_cell = NO_CELL
 	_set_ghost(null)
 
 
@@ -156,15 +170,34 @@ func _can_build(cell: Vector2i) -> bool:
 	return not game.is_over and board.is_buildable(cell) and game.can_afford(price_of(_ghost))
 
 
+func _can_upgrade(cell: Vector2i) -> bool:
+	if game.is_over or not board.is_in_bounds(cell) or board.is_path_cell(cell):
+		return false
+	var existing := board.tower_at(cell) as Tower
+	if existing == null or _ghost == null:
+		return false
+	return existing.kind == _ghost.kind and existing.can_upgrade() and game.can_afford(price_of(_ghost))
+
+
 func _try_build(tower_scene: PackedScene, cell: Vector2i) -> bool:
 	var price := price_of(_ghost)
-	if not _can_build(cell) or not game.spend(price):
-		return false
-	var tower: Tower = tower_scene.instantiate()
-	tower.upgrades = game.upgrades
-	tower.paid = price
-	board.place_tower(cell, tower)
-	return true
+	if _can_upgrade(cell):
+		if not game.spend(price):
+			return false
+		var existing := board.tower_at(cell) as Tower
+		existing.upgrade(price)
+		if _carry_hand and _carry_hand.has_method("pulse"):
+			_carry_hand.pulse(0.6, 0.1)
+		return true
+	elif _can_build(cell):
+		if not game.spend(price):
+			return false
+		var tower: Tower = tower_scene.instantiate()
+		tower.upgrades = game.upgrades
+		tower.paid = price
+		board.place_tower(cell, tower)
+		return true
+	return false
 
 
 ## The tile directly below a carried tower, or NO_CELL if it's off the board
@@ -195,11 +228,25 @@ func _update_markers(cell: Vector2i) -> void:
 	_range_ring.visible = shown
 	if not shown:
 		return
-	_marker_material.albedo_color = BUILDABLE_COLOR if _can_build(cell) else BLOCKED_COLOR
+	var can_up := _can_upgrade(cell)
+	var can_bld := _can_build(cell)
+	if can_up:
+		_marker_material.albedo_color = UPGRADE_COLOR
+		_range_ring_material.albedo_color = Color(1.0, 0.85, 0.3, 0.35)
+	elif can_bld:
+		_marker_material.albedo_color = BUILDABLE_COLOR
+		_range_ring_material.albedo_color = Color(1.0, 1.0, 1.0, 0.25)
+	else:
+		_marker_material.albedo_color = BLOCKED_COLOR
+		_range_ring_material.albedo_color = Color(1.0, 1.0, 1.0, 0.25)
 	var spot := board.cell_to_local(cell) + Vector3.UP * 0.003
 	_marker.position = spot
 	_range_ring.position = spot
 	var reach := _ghost.get_range()
+	if can_up:
+		var existing := board.tower_at(cell) as Tower
+		if existing:
+			reach = existing.get_upgraded_range()
 	_range_ring.scale = Vector3(reach, 1.0, reach)
 
 
@@ -219,7 +266,8 @@ func _build_markers() -> void:
 	ring.bottom_radius = 1.0
 	ring.height = 0.002
 	ring.radial_segments = 48
-	ring.material = _overlay_material(Color(1, 1, 1, 0.25))
+	_range_ring_material = _overlay_material(Color(1, 1, 1, 0.25))
+	ring.material = _range_ring_material
 	_range_ring = MeshInstance3D.new()
 	_range_ring.mesh = ring
 	_range_ring.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF

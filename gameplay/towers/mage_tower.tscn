@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" path="res://assets/kenney/tower_defense/tower-round-middle-a.glb" id="m1"]
 [ext_resource type="PackedScene" path="res://assets/kenney/tower_defense/tower-round-crystals.glb" id="m2"]
 
-[node name="MageTower" type="Node3D"]
+[node name="MageTower" type="Node3D" node_paths=PackedStringArray("top_nodes")]
 script = ExtResource("1_tower")
 display_name = "Mage"
 kind = "mage"
@@ -20,6 +20,9 @@ bonus_damage_vs = Dictionary[String, float]({
 projectile_speed = 1.2
 projectile_color = Color(0.4, 0.9, 1, 1)
 muzzle_height = 0.12
+upgrade_piece = ExtResource("m1")
+upgrade_piece_height = 0.6
+top_nodes = [NodePath("Model/Piece3")]
 
 [node name="Model" type="Node3D" parent="."]
 transform = Transform3D(0.065, 0, 0, 0, 0.065, 0, 0, 0, 0.065, 0, 0, 0)
