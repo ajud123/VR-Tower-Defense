@@ -58,6 +58,7 @@ const GROUP_PAUSE := 2.0
 var _queue: Array = []
 var _spawn_timer: float = 0.0
 var _alive: int = 0
+var _last_countdown_sec: int = -1
 
 
 func _ready() -> void:
@@ -81,6 +82,10 @@ func _process(delta: float) -> void:
 			game.win()
 			return
 		game.next_wave_in -= delta
+		var secs_left := ceili(game.next_wave_in)
+		if secs_left <= 3 and secs_left >= 1 and secs_left != _last_countdown_sec:
+			_last_countdown_sec = secs_left
+			Audio.play_2d("countdown_tick", 0.0, 1.0 + (3 - secs_left) * 0.06)
 		if game.next_wave_in <= 0.0:
 			_start_next_wave()
 
@@ -88,8 +93,11 @@ func _process(delta: float) -> void:
 func _start_next_wave() -> void:
 	game.wave += 1
 	game.next_wave_in = -1.0
+	_last_countdown_sec = -1
 	var wave: Dictionary = WAVES[game.wave - 1]
 	game.wave_name = wave.name
+	var is_boss := (wave.name as String).begins_with("BOSS")
+	Audio.play_2d("wave_boss" if is_boss else "wave_start")
 	_queue.clear()
 	var wait := 0.0
 	for group: Array in wave.groups:
@@ -133,5 +141,6 @@ func _after_enemy_gone() -> void:
 	game.earn(bonus)
 	game.last_wave_bonus = bonus
 	if game.wave < WAVES.size():
+		Audio.play_2d("wave_clear")
 		game.next_wave_in = time_between_waves
 		game.wave_name = WAVES[game.wave].name

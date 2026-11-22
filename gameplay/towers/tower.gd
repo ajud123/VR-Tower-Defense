@@ -191,6 +191,8 @@ func _update_level_badge() -> void:
 func _play_upgrade_effects() -> void:
 	if not is_inside_tree():
 		return
+	var at_top := global_position + Vector3.UP * muzzle_height
+	Audio.play_3d("tower_upgrade_max" if level >= max_level else "tower_upgrade", at_top)
 	var world := get_tree().current_scene if get_tree() else get_parent()
 	if world == null:
 		return
@@ -298,6 +300,7 @@ func _process(delta: float) -> void:
 	_aim_at(targets[0])
 	if _cooldown <= 0.0:
 		_cooldown = get_fire_interval()
+		Audio.play_3d(kind + "_shoot", global_position + Vector3.UP * muzzle_height)
 		# The furthest along first, plus extras with multishot.
 		for target in targets.slice(0, 1 + get_multishot()):
 			_fire(target)

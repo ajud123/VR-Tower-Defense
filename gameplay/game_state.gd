@@ -63,4 +63,5 @@ func _end(player_won: bool) -> void:
 		return
 	is_over = true
 	won = player_won
+	Audio.play_2d("game_win" if player_won else "game_over")
 	ended.emit(player_won)

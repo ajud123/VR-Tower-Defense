@@ -111,6 +111,8 @@ func smash(cell: Vector2i) -> void:
 	game.earn(refund)
 	var world := board.get_parent()
 	var at := tower.global_position + Vector3.UP * 0.04
+	Audio.play_3d("hammer_smash", at)
+	Audio.play_3d("coins", at + Vector3.UP * 0.04)
 	Effects.burst(world, at, DUST_COLOR, 20, 0.014, 0.12, 0.6)
 	Effects.burst(world, at + Vector3.UP * 0.03, GOLD_COLOR, 16, 0.008, 0.2, 0.6)
 	_show_refund(world, at + Vector3.UP * 0.06, refund)

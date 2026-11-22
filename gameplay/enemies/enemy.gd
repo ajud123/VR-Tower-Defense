@@ -107,6 +107,7 @@ func _process(delta: float) -> void:
 	progress += current_speed * delta
 	if progress_ratio >= 1.0:
 		_dead = true
+		Audio.play_3d("castle_hit", global_position)
 		reached_end.emit()
 		queue_free()
 		return
@@ -170,6 +171,14 @@ func _update_health_bar() -> void:
 ## Falls over, then goes away. Towers already ignore it (is_dead()).
 func _die() -> void:
 	remove_from_group("enemies")
+	if lives_cost > 1:
+		Audio.play_3d("enemy_death_boss", global_position)
+	elif kind == "skeleton":
+		Audio.play_3d("enemy_death_skeleton", global_position)
+	elif kind == "ghost":
+		Audio.play_3d("enemy_death_ghost", global_position)
+	else:
+		Audio.play_3d("enemy_death", global_position)
 	_health_bar.hide()
 	_tint.albedo_color.a = 0.0
 	var linger := 0.0

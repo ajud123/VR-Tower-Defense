@@ -54,9 +54,12 @@ var _return_tween: Tween
 var _hover_count: int = 0
 var _focus: float = 0.0
 
+const SIZZLE_PATH := "res://assets/audio/toys/magnifier_sizzle.ogg"
+
 var _burn_spot: MeshInstance3D
 var _burn_particles: CPUParticles3D
 var _frame_mat: StandardMaterial3D
+var _sizzle_player: AudioStreamPlayer3D
 
 
 func _ready() -> void:
@@ -210,6 +213,16 @@ func _setup_visuals() -> void:
 	_burn_particles.top_level = true
 	add_child(_burn_particles)
 
+	var sizzle_stream := Audio.load_looping(SIZZLE_PATH)
+	if sizzle_stream:
+		_sizzle_player = AudioStreamPlayer3D.new()
+		_sizzle_player.stream = sizzle_stream
+		_sizzle_player.bus = &"SFX" if AudioServer.get_bus_index("SFX") != -1 else &"Master"
+		_sizzle_player.unit_size = 0.4
+		_sizzle_player.max_distance = 3.5
+		_sizzle_player.volume_db = -30.0
+		_burn_spot.add_child(_sizzle_player)
+
 
 func _update_held_position(delta: float) -> void:
 	# Detect if held by desktop player hold point.
@@ -246,6 +259,11 @@ func _update_held_position(delta: float) -> void:
 
 
 func _update_optics(delta: float) -> void:
+	# Only focus real sunlight during daylight hours (not moonlight at night).
+	var day_night := get_tree().get_first_node_in_group("day_night")
+	if day_night and not day_night.get("is_daylight"):
+		_set_beam_active(false)
+		return
 	var sun_dir := _sun_direction()
 	var lens_pos := _lens.global_position
 	# The lens normal passing through the glass in world space is Magnifier's local Z.
@@ -335,6 +353,19 @@ func _update_optics(delta: float) -> void:
 		else:
 			_burn_particles.emitting = false
 
+	# Dynamic spatial sizzling at the focal spot (quieter on wood, hotter on an enemy).
+	if _sizzle_player:
+		if _focus >= 0.35 and has_hit:
+			var intensity := clampf((_focus - 0.35) / 0.65, 0.0, 1.0)
+			var target_db := lerpf(-16.0, -5.0, intensity) if burning_enemy else lerpf(-24.0, -14.0, intensity)
+			var target_pitch := lerpf(1.0, 1.28, intensity) if burning_enemy else lerpf(0.85, 1.05, intensity)
+			_sizzle_player.volume_db = move_toward(_sizzle_player.volume_db, target_db, delta * 30.0)
+			_sizzle_player.pitch_scale = move_toward(_sizzle_player.pitch_scale, target_pitch, delta * 3.0)
+			if not _sizzle_player.playing:
+				_sizzle_player.play()
+		elif _sizzle_player.playing:
+			_sizzle_player.stop()
+
 	# VR controller haptics.
 	if burning_enemy and _holder and _holder.has_method("pulse"):
 		_holder.pulse(0.12 * _focus, 0.04)
@@ -348,6 +379,8 @@ func _set_beam_active(active: bool) -> void:
 		_burn_spot.visible = active
 	if _burn_particles:
 		_burn_particles.emitting = false
+	if _sizzle_player and not active and _sizzle_player.playing:
+		_sizzle_player.stop()
 
 
 func _go_home() -> void:

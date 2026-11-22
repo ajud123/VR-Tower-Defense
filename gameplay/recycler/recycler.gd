@@ -14,6 +14,8 @@ extends StaticBody3D
 const IDLE_SPEED := 1.5
 const SHRED_SPEED := 24.0
 const GOLD_COLOR := Color(1.0, 0.85, 0.25)
+const IDLE_AUDIO_PATH := "res://assets/audio/machines/recycler_idle.ogg"
+const SHRED_AUDIO_PATH := "res://assets/audio/machines/recycler_shred.ogg"
 
 @export var game: GameState
 @export var station: CardStation
@@ -34,6 +36,8 @@ var _target_speed: float = IDLE_SPEED
 var _shredding_cards: Dictionary = {}
 var _shredding_count: int = 0
 var _hover_count: int = 0
+var _idle_player: AudioStreamPlayer3D
+var _shred_player: AudioStreamPlayer3D
 
 
 func _ready() -> void:
@@ -43,6 +47,7 @@ func _ready() -> void:
 	if _hopper:
 		_hopper.body_entered.connect(_on_hopper_body_entered)
 	_find_dependencies()
+	_setup_audio()
 	_update_screen_idle()
 
 
@@ -52,6 +57,34 @@ func _process(delta: float) -> void:
 	if _cyl1 and _cyl2:
 		_cyl1.rotate_x(delta * _speed)
 		_cyl2.rotate_x(-delta * _speed)
+	if _shred_player and _shred_player.playing:
+		var t := clampf((_speed - IDLE_SPEED) / (SHRED_SPEED - IDLE_SPEED), 0.0, 1.0)
+		_shred_player.pitch_scale = lerpf(0.75, 1.35, t)
+
+
+func _setup_audio() -> void:
+	var bus := &"SFX" if AudioServer.get_bus_index("SFX") != -1 else &"Master"
+	var idle_stream := Audio.load_looping(IDLE_AUDIO_PATH)
+	if idle_stream:
+		_idle_player = AudioStreamPlayer3D.new()
+		_idle_player.stream = idle_stream
+		_idle_player.bus = bus
+		_idle_player.volume_db = -23.0
+		_idle_player.unit_size = 0.7
+		_idle_player.max_distance = 5.5
+		_idle_player.position = Vector3(0, 0.2, 0)
+		add_child(_idle_player)
+		_idle_player.play()
+	var shred_stream := Audio.load_looping(SHRED_AUDIO_PATH)
+	if shred_stream:
+		_shred_player = AudioStreamPlayer3D.new()
+		_shred_player.stream = shred_stream
+		_shred_player.bus = bus
+		_shred_player.volume_db = -4.5
+		_shred_player.unit_size = 1.4
+		_shred_player.max_distance = 11.0
+		_shred_player.position = Vector3(0, 0.25, 0)
+		add_child(_shred_player)
 
 
 func _find_dependencies() -> void:
@@ -87,6 +120,8 @@ func _on_hopper_body_entered(body: Node) -> void:
 func _shred_card(view: CardView) -> void:
 	_shredding_cards[view] = true
 	_shredding_count += 1
+	if _shred_player and not _shred_player.playing:
+		_shred_player.play()
 
 	if view.state == CardView.State.HELD:
 		view._holder = null
@@ -130,9 +165,12 @@ func _finish_shred(view: CardView, refund: int) -> void:
 	_stop_shred_particles()
 	_shredding_cards.erase(view)
 	_shredding_count = maxi(_shredding_count - 1, 0)
+	if _shredding_count == 0 and _shred_player and _shred_player.playing:
+		_shred_player.stop()
 
 	var world := get_tree().current_scene if (get_tree() and get_tree().current_scene) else get_parent()
 	var at := to_global(Vector3(0, 0.45, -0.02))
+	Audio.play_3d("coins", at)
 
 	if world and is_inside_tree():
 		Effects.burst(world, at, GOLD_COLOR, 20, 0.009, 0.18, 0.6)

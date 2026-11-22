@@ -26,6 +26,7 @@ const MIN_COMMON_WEIGHT := 1.0
 var _message_until: int = 0
 var _commons_in_a_row: int = 0
 var _base_price: int = 100
+var _unlocked_announced: bool = false
 
 
 func _ready() -> void:
@@ -35,6 +36,9 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
+	if not _unlocked_announced and is_open():
+		_unlocked_announced = true
+		Audio.play_3d("vending_unlock", global_position + Vector3.UP * 1.4)
 	if Time.get_ticks_msec() < _message_until:
 		return
 	if not is_open():
@@ -51,23 +55,41 @@ func _on_lever_pulled() -> void:
 	if game.is_over:
 		return
 	if not is_open():
+		Audio.play_3d("action_error", _screen.global_position)
 		_say(_closed_text())
 		return
 	var choices := game.upgrades.unowned_cards()
 	if choices.is_empty():
+		Audio.play_3d("action_error", _screen.global_position)
 		_say("SOLD OUT")
 		return
 	var cost_paid := price
 	if not game.spend(price):
+		Audio.play_3d("action_error", _screen.global_position)
 		_say("NOT ENOUGH\nGOLD\n\n%d needed" % price)
 		return
 	price += price_step
 	var card := _pick_weighted(choices)
+	Audio.play_3d("vending_dispense", _output.global_position)
+	_play_rarity_chime(card.rarity)
 	# Pop it out of the slot towards the player.
 	var view := station.spawn_card(card, _output.global_position, global_basis.z * 1.2 + Vector3.UP * 0.8)
 	view.paid = cost_paid
 	_say("YOU GOT\n%s!\n\n%s" % [card.title.to_upper(), Card.RARITY_NAMES[card.rarity].to_upper()])
 	_build_display()
+
+
+func _play_rarity_chime(rarity: Card.Rarity) -> void:
+	var sound_id := "rarity_common"
+	match rarity:
+		Card.Rarity.RARE:
+			sound_id = "rarity_rare"
+		Card.Rarity.EPIC:
+			sound_id = "rarity_epic"
+	var at := _output.global_position + Vector3.UP * 0.5
+	get_tree().create_timer(0.18).timeout.connect(func() -> void:
+		Audio.play_3d(sound_id, at)
+	)
 
 
 ## Refunds a card: steps the machine's price back down and refreshes the showcase display.

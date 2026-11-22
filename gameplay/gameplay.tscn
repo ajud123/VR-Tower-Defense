@@ -8,7 +8,7 @@
 [ext_resource type="PackedScene" path="res://gameplay/park_tree.tscn" id="6_tree"]
 [ext_resource type="Script" uid="uid://rdw3csirdy0f" path="res://gameplay/game_state.gd" id="7_game"]
 [ext_resource type="Script" uid="uid://n7awxpd65mx6" path="res://gameplay/tower_placer.gd" id="9_placer"]
-[ext_resource type="PackedScene" path="res://gameplay/recycler/recycler.tscn" id="9_s60jr"]
+[ext_resource type="PackedScene" uid="uid://cu2nv1dpbky1a" path="res://gameplay/recycler/recycler.tscn" id="9_s60jr"]
 [ext_resource type="PackedScene" path="res://gameplay/shop_item.tscn" id="10_shop_item"]
 [ext_resource type="PackedScene" path="res://gameplay/towers/archer_tower.tscn" id="11_archer"]
 [ext_resource type="PackedScene" path="res://gameplay/towers/cannon_tower.tscn" id="12_cannon"]
@@ -19,12 +19,16 @@
 [ext_resource type="PackedScene" path="res://gameplay/cards/card_station.tscn" id="17_station"]
 [ext_resource type="PackedScene" path="res://gameplay/vending_machine/vending_machine.tscn" id="18_machine"]
 [ext_resource type="Script" uid="uid://r788y2t52x6x" path="res://gameplay/shop.gd" id="19_shop"]
+[ext_resource type="PackedScene" path="res://gameplay/boombox/boombox.tscn" id="boombox_scene"]
+[ext_resource type="Script" uid="uid://15ts7tog47yq" path="res://gameplay/day_night_cycle.gd" id="day_night_script"]
 [ext_resource type="PackedScene" uid="uid://5tntpyk0dl6n" path="res://gameplay/hammer/hammer.tscn" id="hammer"]
 [ext_resource type="Texture2D" uid="uid://06rsl18s3kjk" path="res://gameplay/icons/menu.svg" id="icon_menu"]
 [ext_resource type="Texture2D" uid="uid://dngonew4v4kt1" path="res://gameplay/icons/restart.svg" id="icon_restart"]
-[ext_resource type="PackedScene" uid="uid://d1qmmmdrbhdbc" path="res://assets/kenney/graveyard/lightpost-single.glb" id="lamp_model"]
-[ext_resource type="Script" uid="uid://63vlrqt6x8mj" path="res://gameplay/lamp_post.gd" id="lamp_script"]
+[ext_resource type="PackedScene" path="res://gameplay/lamp_post.tscn" id="lamp_post_scene"]
 [ext_resource type="PackedScene" uid="uid://dgb2xtbuvam6t" path="res://gameplay/magnifier/magnifier.tscn" id="magnifier_scene"]
+[ext_resource type="Script" uid="uid://bht7gjjopr2ym" path="res://gameplay/audio/park_ambience.gd" id="park_ambience_script"]
+[ext_resource type="Script" uid="uid://dm1cqgmoydtl7" path="res://gameplay/park_clouds.gd" id="park_clouds_script"]
+[ext_resource type="Script" uid="uid://bbc6d1y76fwu" path="res://gameplay/park_environment.gd" id="park_env_script"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sky"]
 sky_top_color = Color(0.3, 0.52, 0.85, 1)
@@ -39,6 +43,14 @@ sky_material = SubResource("ProceduralSkyMaterial_sky")
 background_mode = 2
 sky = SubResource("Sky_park")
 tonemap_mode = 2
+fog_enabled = true
+fog_mode = 1
+fog_light_color = Color(0.72, 0.8, 0.9, 1)
+fog_density = 1.0
+fog_sky_affect = 0.0
+fog_depth_curve = 1.4
+fog_depth_begin = 18.0
+fog_depth_end = 38.5
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_grass"]
 albedo_color = Color(0.3, 0.5, 0.25, 1)
@@ -47,18 +59,8 @@ albedo_color = Color(0.3, 0.5, 0.25, 1)
 material = SubResource("StandardMaterial3D_grass")
 size = Vector2(80, 80)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gravel"]
-albedo_color = Color(0.7, 0.64, 0.54, 1)
-
-[sub_resource type="BoxMesh" id="BoxMesh_walkway"]
-material = SubResource("StandardMaterial3D_gravel")
-size = Vector3(40, 0.02, 2)
-
 [sub_resource type="BoxShape3D" id="BoxShape3D_Ground"]
 size = Vector3(80, 1, 80)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_Walkway"]
-size = Vector3(40, 0.2, 2)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_TableTop"]
 size = Vector3(2.5, 0.1, 0.94)
@@ -149,6 +151,12 @@ light_energy = 1.1
 shadow_enabled = true
 directional_shadow_max_distance = 25.0
 
+[node name="DayNightCycle" type="Node3D" parent="." unique_id=1176374120 node_paths=PackedStringArray("sun", "world_environment", "park_ambience")]
+script = ExtResource("day_night_script")
+sun = NodePath("../Sun")
+world_environment = NodePath("../WorldEnvironment")
+park_ambience = NodePath("../Park/ParkAmbience")
+
 [node name="PlayerRig" parent="." unique_id=428105615 instance=ExtResource("2_rig")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.75)
 desktop_eye_height = 1.2
@@ -158,10 +166,6 @@ desktop_pitch_degrees = -30.0
 
 [node name="Ground" type="MeshInstance3D" parent="Park" unique_id=898086655]
 mesh = SubResource("PlaneMesh_ground")
-
-[node name="Walkway" type="MeshInstance3D" parent="Park" unique_id=1407389749]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.01, 3.2)
-mesh = SubResource("BoxMesh_walkway")
 
 [node name="Tree1" parent="Park" unique_id=93091096 instance=ExtResource("6_tree")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, -6)
@@ -187,23 +191,55 @@ transform = Transform3D(1.4, 0, 0, 0, 1.4, 0, 0, 0, 1.4, 12, 0, -11)
 [node name="Tree8" parent="Park" unique_id=493567193 instance=ExtResource("6_tree")]
 transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, -13, 0, -9)
 
-[node name="LampPost" type="Node3D" parent="Park" unique_id=749292516]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2, 0, -1.2)
-script = ExtResource("lamp_script")
+[node name="LampPost1" parent="Park" unique_id=1468359891 instance=ExtResource("lamp_post_scene")]
+transform = Transform3D(0.42261827, 0, 0.9063078, 0, 1, 0, -0.9063078, 0, 0.42261827, -2.05, 0, -0.95)
+post_scale = 2.45
+max_light_energy = 3.5
+light_range = 10.0
 
-[node name="Model" parent="Park/LampPost" unique_id=1570019552 instance=ExtResource("lamp_model")]
-transform = Transform3D(1.4, 0, 0, 0, 1.4, 0, 0, 0, 1.4, 0, 0, 0)
+[node name="LampPost3" parent="Park" unique_id=170344426 instance=ExtResource("lamp_post_scene")]
+transform = Transform3D(0.190809, 0, -0.98162717, 0, 1, 0, 0.98162717, 0, 0.190809, 1.35, 0, 4.45)
+max_light_energy = 2.6
+
+[node name="LampPost4" parent="Park" unique_id=1728608789 instance=ExtResource("lamp_post_scene")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.3, 0, 1.45)
+post_scale = 2.55
+max_light_energy = 2.2
+light_range = 9.0
+
+[node name="LampPost5" parent="Park" unique_id=1676351600 instance=ExtResource("lamp_post_scene")]
+transform = Transform3D(0.9659258, 0, -0.25881904, 0, 1, 0, 0.25881904, 0, 0.9659258, 6, 0, 1.15)
+post_scale = 2.55
+max_light_energy = 2.2
+light_range = 9.0
+
+[node name="LampPost6" parent="Park" unique_id=1578441006 instance=ExtResource("lamp_post_scene")]
+transform = Transform3D(-0.9848077, 0, 0.17364818, 0, 1, 0, -0.17364818, 0, -0.9848077, -13.8, 0, 6.2)
+post_scale = 2.6
+max_light_energy = 2.2
+light_range = 9.5
+
+[node name="LampPost7" parent="Park" unique_id=2012092775 instance=ExtResource("lamp_post_scene")]
+transform = Transform3D(-0.9659258, 0, -0.25881904, 0, 1, 0, 0.25881904, 0, -0.9659258, 13.4, 0, 5.2)
+post_scale = 2.6
+max_light_energy = 2.2
+light_range = 9.5
+
+[node name="ParkDetails" type="Node3D" parent="Park" unique_id=1886980584]
+script = ExtResource("park_env_script")
+
+[node name="ParkClouds" type="Node3D" parent="Park" unique_id=907839371]
+script = ExtResource("park_clouds_script")
+
+[node name="ParkAmbience" type="Node3D" parent="Park" unique_id=1583745152]
+script = ExtResource("park_ambience_script")
 
 [node name="WorldCollision" type="StaticBody3D" parent="." unique_id=415013065]
 collision_mask = 0
 
 [node name="Ground" type="CollisionShape3D" parent="WorldCollision" unique_id=1543489793]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.495, 0)
 shape = SubResource("BoxShape3D_Ground")
-
-[node name="Walkway" type="CollisionShape3D" parent="WorldCollision" unique_id=1032289698]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.08, 3.2)
-shape = SubResource("BoxShape3D_Walkway")
 
 [node name="TableTop" type="CollisionShape3D" parent="WorldCollision" unique_id=846777690]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.71, 0)
@@ -414,6 +450,9 @@ game = NodePath("../../Game")
 [node name="Magnifier" parent="PicnicTable" unique_id=1649268423 node_paths=PackedStringArray("sun") instance=ExtResource("magnifier_scene")]
 transform = Transform3D(0.57667476, -0.816974, 3.5711057e-08, 0, -4.3711392e-08, -0.9999999, 0.81697387, 0.5766748, -2.5207251e-08, -0.5893769, 0.7715251, 0.33270767)
 sun = NodePath("../../Sun")
+
+[node name="Boombox" parent="PicnicTable" unique_id=492054095 instance=ExtResource("boombox_scene")]
+transform = Transform3D(0.08715574, 0, -0.9961947, 0, 1, 0, 0.9961947, 0, 0.08715574, 0.95, 0.46, 0.705)
 
 [node name="VendingMachine" parent="." unique_id=2093155452 node_paths=PackedStringArray("game", "station") instance=ExtResource("18_machine")]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 5)

@@ -61,6 +61,10 @@ func interact(_point: Vector3 = Vector3.ZERO) -> void:
 	if now < _next_press_msec:
 		return
 	_next_press_msec = now + int(cooldown * 1000.0)
+	if not Engine.is_editor_hint():
+		var audio := get_node_or_null("/root/Audio")
+		if audio:
+			audio.play_3d("button_press", global_position)
 	# Emit once the cap bottoms out so the press is visible before anything
 	# reacts (e.g. a scene change).
 	var tween := create_tween()

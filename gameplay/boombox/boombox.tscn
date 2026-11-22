@@ -1,0 +1,198 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://gameplay/boombox/boombox.gd" id="1_boombox"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_body"]
+size = Vector3(0.24, 0.16, 0.11)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_poke"]
+size = Vector3(0.26, 0.18, 0.13)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wood"]
+albedo_color = Color(0.55, 0.34, 0.18, 1)
+roughness = 0.72
+
+[sub_resource type="BoxMesh" id="BoxMesh_body"]
+material = SubResource("StandardMaterial3D_wood")
+size = Vector3(0.22, 0.115, 0.082)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_front"]
+albedo_color = Color(0.22, 0.34, 0.28, 1)
+roughness = 0.6
+
+[sub_resource type="BoxMesh" id="BoxMesh_front"]
+material = SubResource("StandardMaterial3D_front")
+size = Vector3(0.205, 0.1, 0.008)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_grille"]
+albedo_color = Color(0.15, 0.14, 0.13, 1)
+roughness = 0.85
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_speaker"]
+material = SubResource("StandardMaterial3D_grille")
+top_radius = 0.032
+bottom_radius = 0.032
+height = 0.008
+radial_segments = 20
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_trim"]
+albedo_color = Color(0.86, 0.76, 0.56, 1)
+metallic = 0.35
+roughness = 0.4
+
+[sub_resource type="TorusMesh" id="TorusMesh_ring"]
+material = SubResource("StandardMaterial3D_trim")
+inner_radius = 0.029
+outer_radius = 0.034
+rings = 20
+
+[sub_resource type="BoxMesh" id="BoxMesh_dial_bg"]
+material = SubResource("StandardMaterial3D_grille")
+size = Vector3(0.068, 0.032, 0.006)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_metal"]
+albedo_color = Color(0.75, 0.74, 0.72, 1)
+metallic = 0.75
+roughness = 0.3
+
+[sub_resource type="BoxMesh" id="BoxMesh_handle_bar"]
+material = SubResource("StandardMaterial3D_metal")
+size = Vector3(0.15, 0.009, 0.012)
+
+[sub_resource type="BoxMesh" id="BoxMesh_handle_post"]
+material = SubResource("StandardMaterial3D_metal")
+size = Vector3(0.01, 0.028, 0.012)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_antenna"]
+material = SubResource("StandardMaterial3D_metal")
+top_radius = 0.0018
+bottom_radius = 0.0028
+height = 0.14
+radial_segments = 8
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_knob"]
+material = SubResource("StandardMaterial3D_trim")
+top_radius = 0.009
+bottom_radius = 0.009
+height = 0.012
+radial_segments = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_led"]
+albedo_color = Color(1, 0.78, 0.25, 1)
+emission_enabled = true
+emission = Color(1, 0.78, 0.25, 1)
+emission_energy_multiplier = 1.4
+
+[sub_resource type="SphereMesh" id="SphereMesh_led"]
+material = SubResource("StandardMaterial3D_led")
+radius = 0.0045
+height = 0.009
+radial_segments = 10
+rings = 6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mote"]
+transparency = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_color = Color(1, 0.9, 0.55, 0.75)
+
+[sub_resource type="SphereMesh" id="SphereMesh_mote"]
+material = SubResource("StandardMaterial3D_mote")
+radius = 0.0035
+height = 0.007
+radial_segments = 6
+rings = 4
+
+[sub_resource type="Gradient" id="Gradient_mote"]
+colors = PackedColorArray(1, 0.92, 0.55, 0.75, 1, 0.92, 0.55, 0)
+
+[node name="Boombox" type="StaticBody3D"]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("1_boombox")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.072, 0)
+shape = SubResource("BoxShape3D_body")
+
+[node name="PokeZone" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.072, 0)
+collision_layer = 0
+collision_mask = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PokeZone"]
+shape = SubResource("BoxShape3D_poke")
+
+[node name="Body" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.058, 0)
+mesh = SubResource("BoxMesh_body")
+
+[node name="FrontPanel" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.058, 0.041)
+mesh = SubResource("BoxMesh_front")
+
+[node name="SpeakerLeft" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, -0.062, 0.056, 0.044)
+mesh = SubResource("CylinderMesh_speaker")
+
+[node name="SpeakerLeftRing" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, -0.062, 0.056, 0.046)
+mesh = SubResource("TorusMesh_ring")
+
+[node name="SpeakerRight" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0.062, 0.056, 0.044)
+mesh = SubResource("CylinderMesh_speaker")
+
+[node name="SpeakerRightRing" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0.062, 0.056, 0.046)
+mesh = SubResource("TorusMesh_ring")
+
+[node name="DialPanel" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.072, 0.044)
+mesh = SubResource("BoxMesh_dial_bg")
+
+[node name="Dial" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.072, 0.0485)
+pixel_size = 0.00028
+modulate = Color(0.92, 1, 0.85, 1)
+text = "FM 1  TOWN"
+font_size = 28
+outline_size = 0
+
+[node name="Knob" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.036, 0.047)
+mesh = SubResource("CylinderMesh_knob")
+
+[node name="PowerLED" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.022, 0.036, 0.046)
+mesh = SubResource("SphereMesh_led")
+
+[node name="HandleTop" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.141, 0)
+mesh = SubResource("BoxMesh_handle_bar")
+
+[node name="HandleLeft" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.07, 0.128, 0)
+mesh = SubResource("BoxMesh_handle_post")
+
+[node name="HandleRight" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.07, 0.128, 0)
+mesh = SubResource("BoxMesh_handle_post")
+
+[node name="Antenna" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.9396926, -0.34202015, 0, 0.34202015, 0.9396926, 0, 0, 0, 1, 0.095, 0.165, -0.02)
+mesh = SubResource("CylinderMesh_antenna")
+
+[node name="MusicMotes" type="CPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.11, 0.02)
+amount = 5
+lifetime = 1.8
+mesh = SubResource("SphereMesh_mote")
+emission_shape = 3
+emission_box_extents = Vector3(0.08, 0.01, 0.02)
+direction = Vector3(0, 1, 0)
+spread = 25.0
+gravity = Vector3(0, 0.03, 0)
+initial_velocity_min = 0.03
+initial_velocity_max = 0.07
+color_ramp = SubResource("Gradient_mote")

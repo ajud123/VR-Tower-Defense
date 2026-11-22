@@ -59,11 +59,13 @@ func place(view: CardView, slot: int) -> bool:
 	if slot == STORAGE:
 		game.upgrades.unequip(view.card)
 		_stored.append(view)
+		Audio.play_3d("card_store", _storage.global_position)
 	else:
 		var occupant: Card = game.upgrades.slots[slot]
 		if occupant and occupant != view.card:
 			_stored.append(_views[occupant])
 		game.upgrades.equip(view.card, slot)
+		Audio.play_3d("card_equip", _slots[slot].global_position)
 	_layout()
 	return true
 

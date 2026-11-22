@@ -196,7 +196,10 @@ func _try_build(tower_scene: PackedScene, cell: Vector2i) -> bool:
 		tower.upgrades = game.upgrades
 		tower.paid = price
 		board.place_tower(cell, tower)
+		Audio.play_3d("tower_build", board.cell_to_world(cell))
 		return true
+	elif cell != NO_CELL and board.is_in_bounds(cell):
+		Audio.play_3d("action_error", board.cell_to_world(cell))
 	return false
 
 

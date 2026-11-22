@@ -97,6 +97,7 @@ func _set_touching(body: Node3D) -> void:
 	if _touching:
 		if _touching.has_method("hover_enter"):
 			_touching.hover_enter()
+		Audio.play_3d("hover_tick", _touching.global_position)
 		pulse(0.15, 0.03)
 
 

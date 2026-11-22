@@ -151,6 +151,12 @@ func _explode(at: Vector3, radius: float, strength: float) -> void:
 	for enemy: Enemy in get_tree().get_nodes_in_group("enemies"):
 		if enemy.global_position.distance_to(at) <= radius:
 			_hit(enemy, strength)
+	if strength < 1.0:
+		Audio.play_3d("impact_cluster", at)
+	elif _explodes:
+		Audio.play_3d("impact_explosion", at)
+	else:
+		Audio.play_3d("impact_boulder", at)
 	if _explodes:
 		Effects.explosion(world, at, radius)
 	else:
@@ -174,6 +180,8 @@ func _chain_from(from: Vector3, hit: Array[Enemy]) -> void:
 			return
 		strength *= CHAIN_FALLOFF
 		var to := next.global_position + Vector3.UP * 0.02
+		if i == 0:
+			Audio.play_3d("proc_chain", to)
 		Effects.zap(get_parent(), from, to, CHAIN_COLOR)
 		_hit(next, strength)
 		hit.append(next)
@@ -185,6 +193,7 @@ func _hit(enemy: Enemy, strength: float) -> void:
 		enemy.ignite(_burn_dps, BURN_DURATION)
 	if _slow > 0.0:
 		enemy.chill(_slow, SLOW_DURATION)
+		Audio.play_3d("proc_frost", enemy.global_position)
 	if _knockback > 0.0:
 		enemy.knock_back(_knockback * strength)
 	# Piercing shots ignore resistances, which are looked up by source.

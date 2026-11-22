@@ -83,6 +83,7 @@ func pick_up(holder: Node3D, offset: Transform3D = Transform3D.IDENTITY) -> bool
 	_hold_offset = offset
 	freeze = true
 	collision_layer = 0
+	Audio.play_3d("card_pickup", global_position)
 	return true
 
 
@@ -95,6 +96,9 @@ func drop(world_position: Vector3, velocity: Vector3 = Vector3.ZERO) -> void:
 	collision_layer = PICKABLE_LAYERS
 	freeze = false
 	linear_velocity = velocity
+	# Skip drop flick when freshly launched out of the vending machine.
+	if velocity.length_squared() < 0.25:
+		Audio.play_3d("card_drop", world_position)
 	# A little tumble, or a card let go upright lands balanced on its edge.
 	angular_velocity = Vector3(randf_range(-4.0, 4.0), randf_range(-2.0, 2.0), randf_range(-4.0, 4.0))
 

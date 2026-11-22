@@ -29,9 +29,11 @@ func _process(delta: float) -> void:
 
 	if _amount >= 0.97 and not _fired:
 		_fired = true
+		Audio.play_3d("lever_clunk", global_position)
 		pulled.emit()
-	elif _amount < 0.3:
+	elif _amount < 0.3 and _fired:
 		_fired = false
+		Audio.play_3d("lever_spring", global_position)
 
 
 func interact(_point: Vector3 = Vector3.ZERO) -> void:
