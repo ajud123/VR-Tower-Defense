@@ -46,7 +46,8 @@ and pulling the trigger.
 The board builds its tiles (Kenney path pieces, turned to follow the path),
 enemy path, spawn portal and castle from the values in
 the inspector (grid size, tile size, path corners), and rebuilds live in the
-editor.
+editor. Each playthrough randomizes the board path (`randomize_path` on `Board`)
+and starting time of day (`randomize_start_time` on `DayNightCycle`).
 
 ## How a game plays (current build)
 

@@ -22,6 +22,8 @@ extends Node3D
 @export var night_duration: float = 60.0
 ## Starting time of day (0.32 = cheerful sunny morning).
 @export_range(0.0, 1.0) var start_time: float = 0.32
+## Picks a random starting time of day each playthrough when enabled.
+@export var randomize_start_time: bool = true
 @export var paused: bool = false
 
 ## Current normalized time of day (0..1).
@@ -95,7 +97,7 @@ const CLOUD_COLOR := [
 
 func _ready() -> void:
 	add_to_group("day_night")
-	time_of_day = start_time
+	time_of_day = randf() if randomize_start_time else start_time
 	if world_environment and world_environment.environment:
 		# Duplicate so runtime color changes never dirty the saved scene resource.
 		_env = world_environment.environment.duplicate() as Environment
@@ -107,6 +109,8 @@ func _ready() -> void:
 		world_environment.environment = _env
 	_build_stars()
 	_apply_time(time_of_day, true)
+	# Sync Park siblings (LampPost, ParkClouds, ParkAmbience) once the tree is ready.
+	_apply_time.call_deferred(time_of_day, true)
 
 
 func _process(delta: float) -> void:

@@ -37,6 +37,9 @@ const CASTLE_SCALE := 0.7
 ## noise) so you can tell them apart. This many shades, up to this dark.
 const TILE_SHADES := 4
 const TILE_SHADE_RANGE := 0.12
+const CARDINAL_DIRS: Array[Vector2i] = [
+	Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1),
+]
 
 @export var columns: int = 12:
 	set(value):
@@ -60,6 +63,8 @@ const TILE_SHADE_RANGE := 0.12
 	set(value):
 		path_corners = value
 		_queue_rebuild()
+## Generates a fresh random path layout each playthrough at runtime.
+@export var randomize_path: bool = true
 
 @export_group("Colors")
 @export var frame_color: Color = Color(0.3, 0.2, 0.12):
@@ -80,9 +85,15 @@ var _enemy_path: Path3D
 var _rebuild_queued := false
 ## [material, shade] -> darkened copy, see _shaded().
 var _shades: Dictionary = {}
+var _shade_seed: int = 0
 
 
 func _ready() -> void:
+	if not Engine.is_editor_hint() and randomize_path:
+		_shade_seed = randi()
+		var generated := _generate_random_corners()
+		if not generated.is_empty():
+			path_corners = generated
 	_rebuild()
 
 
@@ -245,7 +256,7 @@ func _build_tiles() -> void:
 ## Darkens a tile a little, depending on where it is. Shaded copies of the
 ## tile material are shared, so there are only TILE_SHADES of them per material.
 func _shade_tile(tile: Node3D, cell: Vector2i) -> void:
-	var shade := (cell.x + cell.y) % 2 * 2 + absi(hash(cell)) % 2
+	var shade := (cell.x + cell.y) % 2 * 2 + absi(hash(Vector3i(cell.x, cell.y, _shade_seed))) % 2
 	if shade == 0:
 		return
 	for mesh: MeshInstance3D in tile.find_children("*", "MeshInstance3D", true, false):
@@ -358,3 +369,164 @@ func _material(color: Color) -> StandardMaterial3D:
 	material.albedo_color = color
 	material.roughness = 0.85
 	return material
+
+
+func _generate_random_corners() -> Array[Vector2i]:
+	if columns < 5 or rows < 5:
+		return []
+	var area := columns * rows
+	var min_len := maxi(columns + rows + 2, roundi(area * 0.23))
+	var max_len := maxi(min_len + 4, roundi(area * 0.31))
+	var min_turns := 4
+	var max_turns := 8
+	var min_span_x := maxi(2, roundi(columns * 0.75))
+	var min_span_y := maxi(2, roundi(rows * 0.75))
+
+	for attempt in 300:
+		var mode := randi() % 4
+		var start := Vector2i.ZERO
+		var goal_dir := Vector2i.RIGHT
+		match mode:
+			0:
+				start = Vector2i(0, randi() % rows)
+				goal_dir = Vector2i(1, 0)
+			1:
+				start = Vector2i(columns - 1, randi() % rows)
+				goal_dir = Vector2i(-1, 0)
+			2:
+				start = Vector2i(randi() % columns, 0)
+				goal_dir = Vector2i(0, 1)
+			_:
+				start = Vector2i(randi() % columns, rows - 1)
+				goal_dir = Vector2i(0, -1)
+
+		var target_len := randi_range(min_len, max_len)
+		var path: Array[Vector2i] = [start]
+		var visited: Dictionary = {start: true}
+		var prev_dir := Vector2i.ZERO
+		var straight_run := 0
+		var turns := 0
+
+		while path.size() < max_len:
+			var cur := path[-1]
+			var candidates: Array[Vector2i] = []
+			var cand_dirs: Array[Vector2i] = []
+			var weights: Array[float] = []
+
+			for d: Vector2i in CARDINAL_DIRS:
+				var nxt := cur + d
+				if not is_in_bounds(nxt) or visited.has(nxt):
+					continue
+				# Keep adjacent lanes separated by at least one buildable tile.
+				var touches := false
+				for od: Vector2i in CARDINAL_DIRS:
+					var nb := nxt + od
+					if nb != cur and visited.has(nb):
+						touches = true
+						break
+				if touches:
+					continue
+
+				var is_turn := prev_dir != Vector2i.ZERO and d != prev_dir
+				if is_turn and straight_run < 2:
+					continue
+				if is_turn and turns >= max_turns:
+					continue
+				if prev_dir == Vector2i.ZERO and d != goal_dir:
+					continue
+				if _is_goal_edge(nxt, mode) and (path.size() + 1 < min_len or turns < min_turns):
+					continue
+
+				var w := 1.0
+				if not is_turn:
+					if straight_run <= 2:
+						w = 2.4
+					elif straight_run == 3:
+						w = 1.4
+					elif straight_run == 4:
+						w = 0.7
+					else:
+						w = 0.25
+				else:
+					w = 1.8 if straight_run <= 3 else 3.2
+
+				if path.size() >= target_len - 7:
+					var dot := d.x * goal_dir.x + d.y * goal_dir.y
+					if dot > 0:
+						w *= 2.6
+					elif dot < 0:
+						w *= 0.2
+
+				if _is_goal_edge(nxt, mode):
+					w *= 6.0
+
+				candidates.append(nxt)
+				cand_dirs.append(d)
+				weights.append(w)
+
+			if candidates.is_empty():
+				break
+
+			var total_w := 0.0
+			for cw: float in weights:
+				total_w += cw
+			var roll := randf() * total_w
+			var chosen_idx := candidates.size() - 1
+			for idx in candidates.size():
+				roll -= weights[idx]
+				if roll <= 0.0:
+					chosen_idx = idx
+					break
+
+			var chosen := candidates[chosen_idx]
+			var chosen_dir := cand_dirs[chosen_idx]
+			if prev_dir != Vector2i.ZERO and chosen_dir != prev_dir:
+				turns += 1
+				straight_run = 1
+			else:
+				straight_run += 1
+			prev_dir = chosen_dir
+			path.append(chosen)
+			visited[chosen] = true
+
+			if _is_goal_edge(chosen, mode):
+				if path.size() >= min_len and turns >= min_turns:
+					var min_x := chosen.x
+					var max_x := chosen.x
+					var min_y := chosen.y
+					var max_y := chosen.y
+					for p: Vector2i in path:
+						min_x = mini(min_x, p.x)
+						max_x = maxi(max_x, p.x)
+						min_y = mini(min_y, p.y)
+						max_y = maxi(max_y, p.y)
+					if max_x - min_x + 1 >= min_span_x and max_y - min_y + 1 >= min_span_y:
+						return _path_to_corners(path)
+				break
+
+	return []
+
+
+func _is_goal_edge(cell: Vector2i, mode: int) -> bool:
+	match mode:
+		0:
+			return cell.x == columns - 1
+		1:
+			return cell.x == 0
+		2:
+			return cell.y == rows - 1
+		_:
+			return cell.y == 0
+
+
+func _path_to_corners(path: Array[Vector2i]) -> Array[Vector2i]:
+	if path.size() <= 2:
+		var out: Array[Vector2i] = []
+		out.assign(path)
+		return out
+	var corners: Array[Vector2i] = [path[0]]
+	for i in range(1, path.size() - 1):
+		if path[i + 1] - path[i] != path[i] - path[i - 1]:
+			corners.append(path[i])
+	corners.append(path[-1])
+	return corners
