@@ -41,6 +41,8 @@ const GROUP_PAUSE := 2.0
 @export var board: Board
 @export var game: GameState
 @export var first_wave_delay: float = 15.0
+## Short countdown after pressing Start if the player already built a tower.
+@export var ready_wave_delay: float = 3.0
 @export var time_between_waves: float = 10.0
 ## Extra enemy health per wave after the first (0.1 = +10% each wave).
 ## Kept low: towers don't get stronger by themselves, only cards do.
@@ -63,12 +65,18 @@ var _last_countdown_sec: int = -1
 
 func _ready() -> void:
 	game.total_waves = WAVES.size()
-	game.next_wave_in = first_wave_delay
+	game.next_wave_in = -1.0
+	game.wave_name = WAVES[0].name
+	game.game_started.connect(_on_game_started)
+
+
+func _on_game_started() -> void:
+	game.next_wave_in = ready_wave_delay if board.has_towers() else first_wave_delay
 	game.wave_name = WAVES[0].name
 
 
 func _process(delta: float) -> void:
-	if game.is_over:
+	if not game.started or game.is_over:
 		return
 	if not _queue.is_empty():
 		_spawn_timer -= delta

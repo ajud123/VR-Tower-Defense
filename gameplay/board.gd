@@ -141,6 +141,11 @@ func count_towers(kind: String) -> int:
 	return _towers.values().filter(func(tower: Node3D) -> bool: return tower.get("kind") == kind).size()
 
 
+## Whether at least one tower is standing on the board.
+func has_towers() -> bool:
+	return not _towers.is_empty()
+
+
 ## Every path cell in walking order, spawn first.
 func get_path_cells() -> Array[Vector2i]:
 	return _path_cells.duplicate()

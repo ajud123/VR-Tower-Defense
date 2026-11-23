@@ -22,7 +22,7 @@
 [ext_resource type="PackedScene" path="res://gameplay/boombox/boombox.tscn" id="boombox_scene"]
 [ext_resource type="Script" uid="uid://15ts7tog47yq" path="res://gameplay/day_night_cycle.gd" id="day_night_script"]
 [ext_resource type="PackedScene" uid="uid://5tntpyk0dl6n" path="res://gameplay/hammer/hammer.tscn" id="hammer"]
-[ext_resource type="Texture2D" uid="uid://06rsl18s3kjk" path="res://gameplay/icons/menu.svg" id="icon_menu"]
+[ext_resource type="Texture2D" uid="uid://du5h0hsh7q20k" path="res://gameplay/icons/play.svg" id="icon_play"]
 [ext_resource type="Texture2D" uid="uid://dngonew4v4kt1" path="res://gameplay/icons/restart.svg" id="icon_restart"]
 [ext_resource type="PackedScene" path="res://gameplay/lamp_post.tscn" id="lamp_post_scene"]
 [ext_resource type="PackedScene" uid="uid://dgb2xtbuvam6t" path="res://gameplay/magnifier/magnifier.tscn" id="magnifier_scene"]
@@ -433,21 +433,24 @@ mesh = SubResource("BoxMesh_sign_panel")
 [node name="Text" type="Label3D" parent="PicnicTable/StatusSign" unique_id=1282872]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.205, 0.01)
 pixel_size = 0.0008
-text = "Next wave in 12"
+text = "Press the green START button to begin!"
 font_size = 36
 outline_size = 0
 
-[node name="MenuButton" parent="PicnicTable" unique_id=681652491 instance=ExtResource("5_button")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.12, 0.76, -0.36)
-text = "MENU"
-color = Color(0.25, 0.45, 0.8, 1)
-icon = ExtResource("icon_menu")
-label_scale = 0.5
+[node name="StartButton" parent="PicnicTable" unique_id=681652491 instance=ExtResource("5_button")]
+transform = Transform3D(0.45, 0, 0, 0, 0.45, 0, 0, 0, 0.45, 0, 0.76, 0.415)
+text = "START"
+color = Color(0.22, 0.78, 0.28, 1)
+icon = ExtResource("icon_play")
+label_scale = 0.75
+stay_pressed = true
+pulse_when_unpressed = true
+show_label_until_pressed = true
 
 [node name="RestartButton" parent="PicnicTable" unique_id=1262252664 instance=ExtResource("5_button")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.85, 0.76, -0.38)
+transform = Transform3D(0.65, 0, 0, 0, 0.65, 0, 0, 0, 0.65, -0.64, 0.76, -0.36)
 text = "RESTART"
-color = Color(0.3, 0.7, 0.3, 1)
+color = Color(0.85, 0.38, 0.16, 1)
 icon = ExtResource("icon_restart")
 label_scale = 0.5
 
@@ -494,5 +497,5 @@ shape = SubResource("WorldBoundaryShape3D_ni0ts")
 shape = SubResource("WorldBoundaryShape3D_g4a3a")
 
 [connection signal="ended" from="Game" to="." method="_on_game_ended"]
-[connection signal="pressed" from="PicnicTable/MenuButton" to="." method="_on_menu_button_pressed"]
+[connection signal="pressed" from="PicnicTable/StartButton" to="." method="_on_start_button_pressed"]
 [connection signal="pressed" from="PicnicTable/RestartButton" to="." method="_on_restart_button_pressed"]

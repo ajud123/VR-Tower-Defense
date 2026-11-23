@@ -6,6 +6,7 @@ const ROW_HEIGHT := 0.28
 const ICON_SIZE := 0.045
 const WIN_COLOR := Color(1, 0.85, 0.3)
 const LOSE_COLOR := Color(1, 0.35, 0.3)
+const READY_COLOR := Color(0.55, 1.0, 0.55)
 
 @export var game: GameState
 
@@ -32,6 +33,10 @@ func _process(_delta: float) -> void:
 		_text.text = "YOU WIN!" if game.won else "GAME OVER"
 		_text.modulate = WIN_COLOR if game.won else LOSE_COLOR
 		_text.font_size = 56
+	elif not game.started:
+		_text.text = "Press the green START button to begin!"
+		_text.modulate = READY_COLOR
+		_text.font_size = 36
 	elif game.next_wave_in >= 0.0 and game.last_wave_bonus > 0:
 		_text.text = "Wave cleared: +%d gold      Next: %s in %d" % [
 			game.last_wave_bonus, game.wave_name, ceili(game.next_wave_in)

@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="VR-Tower-Defense"
-run/main_scene="uid://d4i53x4wnq3nc"
+run/main_scene="uid://crifx0rrxjipf"
 config/features=PackedStringArray("4.6")
 config/icon="res://icon.svg"
 

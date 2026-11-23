@@ -36,8 +36,7 @@ You sit at a park bench with a tabletop battlefield in front of you. Reach over 
 
 ## Project layout
 
-- `main_menu/` – title screen (the startup scene) with a PLAY button
-- `gameplay/` – the park scene: picnic table, board (`board.gd`), shop, towers, enemies, waves, cards and the vending machine
+- `gameplay/` – the park scene (startup scene): picnic table, board (`board.gd`), shop, towers, enemies, waves, cards and the vending machine
 - `player/` – shared player rig: VR headset + hands, or a desktop camera when no headset is running
 - `interactables/` – push button, pull lever, and the ray used to aim at them
 
@@ -62,7 +61,8 @@ editor.
 - Waves are a table at the top of `gameplay/wave_spawner.gd`: each wave is a
   name and groups like `["ghost", 8, 0.5]` (8 ghosts, 0.5 s apart).
 - Each enemy that reaches the castle costs a life. At 0 lives it's game over;
-  clearing all 20 waves wins. Use RESTART or MENU on the table afterwards.
+  clearing all 20 waves wins. Press the green START button on the table to
+  begin waves, and use RESTART on the table to reset at any time.
 - Killing enemies earns gold, and clearing a wave pays a bonus (30 + 10 per wave).
   Gold buys towers from the shop tray (hover one to see its stats):
   Archer (60, fast single shots), Cannon (100, slow splash), Mage (150, long

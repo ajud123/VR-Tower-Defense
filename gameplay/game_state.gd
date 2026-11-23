@@ -3,6 +3,7 @@ extends Node
 ## Lives, gold and wave progress for one game. Lives on the gameplay scene,
 ## so reloading the scene starts a fresh game.
 
+signal game_started
 signal ended(won: bool)
 
 @export var starting_lives: int = 10
@@ -21,6 +22,7 @@ var wave_name: String = ""
 var next_wave_in: float = -1.0
 ## Gold paid for clearing the last wave, or 0 before any wave is cleared.
 var last_wave_bonus: int = 0
+var started: bool = false
 var is_over: bool = false
 var won: bool = false
 
@@ -28,6 +30,13 @@ var won: bool = false
 func _ready() -> void:
 	lives = starting_lives
 	gold = starting_gold
+
+
+func start() -> void:
+	if started or is_over:
+		return
+	started = true
+	game_started.emit()
 
 
 func can_afford(amount: int) -> bool:
